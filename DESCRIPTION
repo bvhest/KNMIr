@@ -1,0 +1,10 @@
+Package: KNMI
+Title: functions for retrieving weather data from the Dutch meteorological institute KNMI.
+Version: 0.0.1
+Authors@R: person("Bart", "van Hest", email = "hestbv@gmail.com", role = c("aut", "cre"))
+Description: This package provides functions to retrieve historic weather data from both the official Dutch meteorological institute (KNMI) and from the experimental WOW.nl site. The official site only returns data from the offical KNMI weather stations. For some stations, data goes back to 1900. The experimental stations have a limited set of variables and limited history (>Februari 16th 2015). In addition, a seven day forecast can be retrieved. The data can be subsetted based on year and specified variables. The returned data is converted to SI-units, when necessary. Several processing functions are available, such as a function that calculates the Huglin- or VE-index. The package also contains two KNMI dataset with all historic data and with long term averages per decenium.
+Depends: R (>= 3.2.1), data.table, lubridate, plyr, RCurl
+Imports: data.table, lubridate, plyr, RCurl
+License: GPL-3
+LazyData: true
+Encoding: UTF-8
