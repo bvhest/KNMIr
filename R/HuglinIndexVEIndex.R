@@ -72,7 +72,7 @@ berekenHuglinIndex <- function(dgg,
       range$jaar <- format(Sys.Date(), format="%Y")
    }
 
-   # bereken de dagwaaarde:
+   # bereken de dagwaarde:
    range$HuglinIndex <- 1.06*pmax( (((range$gemTemp+range$maxTemp)/2)-10), 0)
    # bereken nu de cumulatieve HuglinIndex:
    range <- ddply(range, .(stationID, jaar), transform, somHuglinIndex = cumsum(HuglinIndex))
@@ -119,7 +119,7 @@ berekenVEIndex <- function(dgg,
       range$jaar <- format(Sys.Date(), format="%Y")
    }
 
-   # bereken de dagwaaarde:
+   # bereken de dagwaarde:
    range$VEIndex <- pmax((range$gemTemp-10), 0)
    # bereken nu de cumulatieve HuglinIndex:
    range <- ddply(range, .(stationID, jaar), transform, somVEIndex = cumsum(VEIndex))
