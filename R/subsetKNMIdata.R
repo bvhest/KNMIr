@@ -39,16 +39,20 @@ subsetKNMIdata <- function(data,
                        "FG","FHX","FHXH","FHN","FHNH","FXX","FXXH",
                        "TG","TN","TNH","TX","TXH","T10N","T10NH",
                        "SQ","SP","Q","DR",
-                       "RH","RHX","RHXH","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH",
-                       "NG","UG","UX","UXH","UN","UNH","EV24")
+                       "RH","RHX","RHXH","EV24",
+                       "PG","PX","PXH","PN","PNH",
+                       "VVN","VVNH","VVX","VVXH",
+                       "NG",
+                       "UG","UX","UXH","UN","UNH")
    nieuwekolomnamen <- c("stationID", "datum", "VectorgemiddeldeWindrichting", "Vectorgemiddeldewindsnelheid",
                          "gemWind","maxWind", "uurMaxWind", "minWind", "uurMinWind", "maxWindstoot", "uurMaxWindstoot",
                          "gemTemp", "minTemp", "uurMinTemp", "maxTemp", "uurMaxTemp", "minTemp10cm", "dagdeelMinTemp10cm",
                          "zon", "percZon", "straling", "duurNeerslag",
-                         "dagTotaalNeerslag", "maxUurNeerslag","uurUurNeerslag",
+                         "dagTotaalNeerslag", "maxUurNeerslag","uurUurNeerslag","refGewasverdamping",
                          "gemLuchtdruk", "maxUurLuchtdruk", "uurMaxUurLuchtdruk", "minUurLuchtdruk", "uurMinUurLuchtdruk",
                          "minZicht", "uurMinZicht","maxZicht", "uurMaxZicht",
-                         "gemBewolking","gemRelVocht","maxRelVocht","uurMaxRelVocht","minRelVocht","uurMinRelVocht","refGewasverdamping"
+                         "gemBewolking",
+                         "gemRelVocht","maxRelVocht","uurMaxRelVocht","minRelVocht","uurMinRelVocht"
                          )
    Setnames(data, old = KNMIkolomnamen, new = nieuwekolomnamen)
 

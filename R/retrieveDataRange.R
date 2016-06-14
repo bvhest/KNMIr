@@ -40,6 +40,7 @@
 #'   \item RH	Etmaalsom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm);
 #'   \item RHX	Hoogste uursom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm);
 #'   \item RHXH	Uurvak waarin RHX is gemeten;
+#'   \item EV24	Referentiegewasverdamping (Makkink) (in 0.1 mm);
 #'   \item PG	Etmaalgemiddelde luchtdruk herleid tot zeeniveau (in 0.1 hPa) berekend uit 24 uurwaarden;
 #'   \item PX	Hoogste uurwaarde van de luchtdruk herleid tot zeeniveau (in 0.1 hPa);
 #'   \item PXH	Uurvak waarin PX is gemeten;
@@ -55,7 +56,6 @@
 #'   \item UXH	Uurvak waarin UX is gemeten;
 #'   \item UN	Minimale relatieve vochtigheid (in procenten);
 #'   \item UNH	Uurvak waarin UN is gemeten;
-#'   \item EV24	Referentiegewasverdamping (Makkink) (in 0.1 mm);
 #' }
 #' @keywords historic weather data
 #' @export
@@ -68,7 +68,7 @@ retrieveDataRange <- function(stationID="ALL",
    link <- paste(baseURL,"?start=",from,"&end=",to,"&stns=",stationID,"&",params, sep="")
    data <- data.frame(read.csv(link, header = FALSE, sep = ",", comment.char = "#"))
 
-   colnames(data) <- c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N","T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH","NG","UG","UX","UXH","UN","UNH","EV24")
+   colnames(data) <- c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N","T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","EV24","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH","NG","UG","UX","UXH","UN","UNH")
 
    data
 }
