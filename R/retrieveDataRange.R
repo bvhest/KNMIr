@@ -9,7 +9,7 @@
 #' You can specify a specific station or get data from all the stations at once (the default).
 #' When the from and to date parameters are not proviced, all measurements are returned. Otherwise the data is subsetted to the given interval.
 #'
-#' @param stationID ID for the KNMI station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
+#' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
 #' @param from startdate for the time-window. Defaults to the start of the current year. Note: a string of characters in the format 'yyyymmdd'.
 #' @param to enddate for the time-window. Defaults to yesterday. Note: a string of characters in the format 'yyyymmdd'.
 #' @return a data frame.
@@ -60,8 +60,8 @@
 #' @keywords historic weather data
 #' @export
 retrieveDataRange <- function(stationID="ALL",
-                              from=paste(format(today(), format="%Y"), "0101", sep=""),
-                              to=format(today()-1, format="%Y%m%d")) {
+                              from=paste(format(Sys.Date(), format="%Y"), "0101", sep=""),
+                              to=format(Sys.Date()-1, format="%Y%m%d")) {
 
    baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
    params <- "ALL"
