@@ -78,13 +78,15 @@ listFilesOnFTPserver <- function(url){
 #'
 retrieveHistoricDataDE <- function(stationID,
                                    from = paste0(format(Sys.Date(), format="%Y"), "0101"),
-                                   to = format(Sys.Date()-1, format="%Y%m%d")) {
+                                   to = paste0(as.integer(format(Sys.Date(), format="%Y"))-1, "1231")) {
 
+  aantalDagen <- as.integer(as.Date(to, format="%Y%m%d")-as.Date(from, format="%Y%m%d"))
   d <- data.frame( "STN"= integer(), "YYYYMMDD"= integer(), "TG" = numeric(),  "TX" = numeric(), "TN" = numeric(), "T10N" = numeric(), "NG" = numeric(), "PG" = numeric(), "UG" = numeric(), "FG" = numeric() , "FXX" = numeric(), "RH" = numeric(), "SQ" = numeric())
   for (id in stationID) {
     print(paste("downloading data for station",id))
     t <- retrieveHistoricDEDataByStation(id, as.integer(from), as.integer(to))
-    d <- rbind(d,t)
+    # only add stations that contain sufficient data over the selected period.
+    if (nrow(t)>=aantalDagen) d <- rbind(d,t)
   }
   return(d)
 }
