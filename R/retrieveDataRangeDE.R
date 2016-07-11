@@ -1,3 +1,6 @@
+library(stringr)
+library(readr)
+
 #
 # load German weather stations
 #
@@ -23,33 +26,32 @@
 retrieveDEDataByStation <- function(stationID,
                                     from,
                                     to) {
-   library(stringr)
-   library(readr)
+  padded_station_id <- str_pad(stationID, 5, pad = "0")
 
-   temp <- tempfile()
-   url <- "ftp://ftp-cdc.dwd.de/pub/CDC/observations_germany/climate/daily/kl/recent/"
-   zipname <- paste0("tageswerte_KL_",str_pad(stationID, 5, pad = "0"),"_akt.zip")
+  temp <- tempfile()
+  url <- "ftp://ftp-cdc.dwd.de/pub/CDC/observations_germany/climate/daily/kl/recent/"
+  zipname <- paste0("tageswerte_KL_",padded_station_id,"_akt.zip")
 
-   download.file(paste0(url,zipname),temp)
+  download.file(paste0(url,zipname),temp)
 
-   datum_tot <- stations$actief_tot[stations$station == stationID]
-   datum_van <- datum_tot - 500 # data wordt aangeboden van gisteren-500 dagen tot aan gisteren.
+  datum_tot <- stations$actief_tot[stations$station == stationID]
+  datum_van <- datum_tot - 500 # data wordt aangeboden van gisteren-500 dagen tot aan gisteren.
 
-   # filename moet er uitzien als: produkt_klima_Tageswerte_20150107_20160709_00044.txt
-   filename <- paste0("produkt_klima_Tageswerte_",datum_van,"_",datum_tot,"_",str_pad(stationID, 5, pad = "0"),".txt")
-   t <- unz(temp, filename)
-   d <- read.table(file = unz(temp, filename),
-                   header = TRUE,
-                   sep = ";",
-                   fill = TRUE)
-   unlink(temp)
+  # filename moet er uitzien als: produkt_klima_Tageswerte_20150107_20160709_00044.txt
+  filename <- paste0("produkt_klima_Tageswerte_",datum_van,"_",datum_tot,"_",padded_station_id,".txt")
+  t <- unz(temp, filename)
+  d <- read.table(file = unz(temp, filename),
+                  header = TRUE,
+                  sep = ";",
+                  fill = TRUE)
+  unlink(temp)
 
-   colnames(d) <- c("STN", "YYYYMMDD", "QUALITY", "TG", "DAMPDRUK", "NG", "PG", "UG", "FG" , "TX", "TN", "T10N", "FXX", "RH", "RH_IND", "SQ", "SNEEUWHOOGTE", "EOR")
+  colnames(d) <- c("STN", "YYYYMMDD", "QUALITY", "TG", "DAMPDRUK", "NG", "PG", "UG", "FG" , "TX", "TN", "T10N", "FXX", "RH", "RH_IND", "SQ", "SNEEUWHOOGTE", "EOR")
 
-   d <- subset(d,
-               YYYYMMDD >= from & YYYYMMDD <= to,
-               select= c("STN", "YYYYMMDD", "TG",  "TX", "TN", "T10N", "NG", "PG", "UG", "FG" , "FXX", "RH", "SQ"))
-   return(d)
+  d <- subset(d,
+              YYYYMMDD >= from & YYYYMMDD <= to,
+              select= c("STN", "YYYYMMDD", "TG",  "TX", "TN", "T10N", "NG", "PG", "UG", "FG" , "FXX", "RH", "SQ"))
+  return(d)
 }
 
 #' Title retrieveDataRangeDE
