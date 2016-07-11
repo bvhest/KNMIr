@@ -3,11 +3,12 @@
 
 #' subset KNMI data-set
 #'
-#' This function returns a cleaned and renamed subset of a KNMI data-set. It provides meaningfull names for the different variables and converts these to SI-units.
+#' This function returns a cleaned and renamed subset of a KNMI data-set.
+#' It provides meaningfull names for the different variables and converts these to SI-units.
 #'
 #' @param data data-frame with KNMI-data that has been obtaines with the function 'retrieveHistoricData' or 'retrieveDataRange'.
 #' @param jaar start-year for the selection. Default is 2006.
-#' @param variabelen list with variables that should are required. Default is ("FG","TG","TN","TX","SQ","SP","Q","RH","NG").
+#' @param variabelen list with variables that should be returned. Default is ("FG","TG","TN","TX","SQ","SP","Q","RH","NG").
 #'
 #' @return data-frame met subset van de KNMI-data.
 #' @format The default data frame contains the following columns:
