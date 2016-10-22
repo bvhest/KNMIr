@@ -1,5 +1,3 @@
-library(stringr)
-library(readr)
 
 #' Title retrieveHistoricDEDataByStation
 #'
@@ -13,6 +11,9 @@ library(readr)
 retrieveHistoricDEDataByStation <- function(stationID,
                                             from,
                                             to) {
+
+  library(stringr)
+  library(readr)
   padded_station_id <- str_pad(stationID, 5, pad = "0")
 
   url <- "ftp://ftp-cdc.dwd.de/pub/CDC/observations_germany/climate/daily/kl/historical/"

@@ -50,7 +50,7 @@ subsetDWdata <- function(data,
                      "NG", "PG", "UG",
                      "FG" , "FXX", "RH", "SQ")
    nieuwekolomnamen <- c("stationID", "datum",
-                         "gemTemp", "minTemp", "maxTemp", "minTemp10cm",
+                         "gemTemp", "maxTemp", "minTemp", "minTemp10cm",
                          "gemBewolking"," gemLuchtdruk", "gemRelVocht",
                          "gemWind","maxWind", "dagTotaalNeerslag", "zon")
    Setnames(data, old = DWkolomnamen, new = nieuwekolomnamen)
