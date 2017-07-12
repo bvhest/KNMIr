@@ -24,3 +24,10 @@ Several processing functions are available, such as a function that
 calculates the Huglin- or VE-index. The package also contains two KNMI dataset with all
 historic data and with long term averages per decenium.
 
+## ToDo
+
+  1. integreer klimaat data DWD (DE) :  
+     nb nu mogelijk met rdwd-packages
+  2. integreer klimaat data KMI (BE) :   
+     nb data te downloaden vanaf http://www.meteo.be/meteo/view/nl/27484519-Klimaat+in+uw+gemeente.html
+     http://opendata.meteo.be/geonetwork/srv/dut/catalog.search#/home

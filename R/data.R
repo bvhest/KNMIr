@@ -19,7 +19,7 @@
 
 #' KNMI longterm averages
 #'
-#' A dataset containing the longterm averages of measurements.
+#' A dataset containing the longterm averages (from 01-01-1999 to 31-12-2014) of measurements.
 #'
 #' @format A data frame with 13346 rows and 11 variables:
 #' \itemize{
