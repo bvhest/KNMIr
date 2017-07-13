@@ -1,13 +1,13 @@
-# library(plyr)
-# library(RCurl)
-
-#' retrieve Data Range
+#' get Climate Data Set
 #'
-#' This function retrieves weather data collected by the official KNMI weather stations for a specified date-range.
-#' The function 'retrieveHistoricData()' in this package is optimized to collect data for larger date-ranges (e.g. for > 10 years), but is less flexible with respect to the end date.
+#' This function retrieves raw climate data collected by the official KNMI measurement stations for a specific station
+#' and/or date-range. It uses the, somewhat slower, KNMI-API to collect the data.
+#' The function 'retrieveHistoricData()' in this package is optimized to collect data for larger date-ranges (e.g.
+#' for > 10 years), but is less flexible with combinations of all or specific stations and date ranges.
 #'
 #' You can specify a specific station or get data from all the stations at once (the default).
-#' When the from and to date parameters are not proviced, all measurements are returned. Otherwise the data is subsetted to the given interval.
+#' When the from and to date parameters are not proviced, all measurements for the current year are returned. Otherwise
+#' the data is subsetted to the given interval.
 #'
 #' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
 #' @param from startdate for the time-window. Defaults to the start of the current year. Note: a string of characters in the format 'yyyymmdd'.
@@ -59,16 +59,16 @@
 #' }
 #' @keywords historic weather data
 #' @export
-retrieveDataRange <- function(stationID="ALL",
-                              from=paste(format(Sys.Date(), format="%Y"), "0101", sep=""),
-                              to=format(Sys.Date()-1, format="%Y%m%d")) {
+getClimateDataSet <- function(stationID = "ALL",
+                              from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
+                              to = format(Sys.Date()-1, format = "%Y%m%d")) {
 
    baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
    params <- "ALL"
-   link <- paste(baseURL,"?start=",from,"&end=",to,"&stns=",stationID,"&",params, sep="")
+   link <- paste(baseURL, "?start=", from, "&end=", to, "&stns=", stationID,"&", params, sep = "")
    data <- data.frame(read.csv(link, header = FALSE, sep = ",", comment.char = "#"))
 
    colnames(data) <- c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N","T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","EV24","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH","NG","UG","UX","UXH","UN","UNH")
 
-   data
+   return(data)
 }

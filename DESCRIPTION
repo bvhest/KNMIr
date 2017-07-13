@@ -1,7 +1,7 @@
 Package: KNMI
-Title: functions for retrieving weather data from the Dutch meteorological
+Title: functions for retrieving climate data from the Dutch meteorological
     institute KNMI.
-Version: 0.0.1
+Version: 0.2.0
 Authors@R: person("Bart", "van Hest", email = "hestbv@gmail.com", role = c("aut", "cre"))
 Description: This package provides functions to retrieve historic weather
     data from both the official Dutch meteorological institute (KNMI) and from
