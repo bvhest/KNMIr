@@ -1,12 +1,6 @@
-# library(lubridate)
-# library(data.table)
-library(plyr)
-
-#' find_nearest_KNMI_station
-#'
 #' This function returns the KNMI measurement station that is closed to the
 #' provided location. One can select from the active stations (active = TRUE,
-#' the default) or *all* stations (active = FALSE).
+#' the default) or all stations (active = FALSE).
 #'
 #' @param location data-frame with a lat/lon-column (using the WGS84 coordinate
 #'   system).

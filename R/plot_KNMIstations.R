@@ -1,10 +1,5 @@
-# library(lubridate)
-# library(data.table)
 library(ggmap)
 library(ggplot2)
-
-#' plot_KNMI_stations
-#'
 #' This function plots a map of The Netherlands and shows the locations of the
 #' KNMI measurement station and their id and name. One can show the active
 #' stations (active = TRUE, the default) or *all* stations (active = FALSE).

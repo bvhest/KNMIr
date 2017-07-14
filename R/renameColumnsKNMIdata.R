@@ -1,5 +1,3 @@
-#' rename Columns KNMI data
-#'
 #' This function provides meaningfull names for the different variables.
 #'
 #' @param data data-frame with KNMI-data that has been obtained with the function 'getClimateDateSet()',
@@ -8,7 +6,7 @@
 #' @return data-frame met subset van de KNMI-data.
 #' @export
 #'
-renameColumnsKNMIdata <- function(data) {
+rename_columns_KNMI_data <- function(data) {
 
    # provide more meaninfull column names:
    KNMIkolomnamen <- c("STN","YYYYMMDD","DDVEC","FHVEC",

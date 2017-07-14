@@ -1,8 +1,9 @@
-#' this function adds the VE-index to the original data-frame. See berekenVEIndex for more details.
+#' this helper-function adds [growing degree days](https://en.wikipedia.org/wiki/Growing_degree-day), either the Huglin-index or the VE-index, to the provided data-frame. See calculateHuglinIndex or calculateVEIndex for more details.
 #'
-#' @param dgg dataframe containing two mandatory columns; the day-of-the-year (dagVjaar), the daily mean temperature (gemTemp) and an optional column containing the year (jaar). Temperatures in degrees Celcius. The data frame can contain the ranges for multiple years.
+#' @param data      dataframe containing two mandatory columns; the day-of-the-year (dagVjaar), the daily mean temperature (gemTemp) and an optional column containing the year (jaar). Temperatures in degrees Celcius. The data frame can contain the ranges for multiple years.
+#' @param dggType   type of degree days that will be added. Two options: 'Huglin' or 'VE'. Default is 'Huglin'.
 #' @param startDate the start of the summation interval, formatted as a string 'yyyy-mm-dd'. Defaults to the start of the year.
-#' @param endDate the end of the summation interval, formatted as a string 'yyyy-mm-dd'. Defaults to the end of the year.
+#' @param endDate   the end of the summation interval, formatted as a string 'yyyy-mm-dd'. Defaults to the end of the year.
 #'
 #' @return dataframe containing the year (jaar), the day-of-the-year (dagVjaar) and the VE-index at the dagVjaar.
 #'
@@ -10,31 +11,30 @@
 #'
 #' @export
 #'
-voegToe <- function(dgg,
-                    indexType,
-                    startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
-                    endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
+add_degree_days <- function(data,
+                          dggType = "Huglin",
+                          startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
+                          endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
 
    if (indexType == "Huglin") {
       # bereken Huglin-index:
-      HUI <- berekenHuglinIndex(dgg, startDate=startDate, endDate=endDate)
+      HUI <- calculateHuglinIndex(data, startDate = startDate, endDate = endDate)
       # voeg berekende waarden toe aan originele data-frame:
-      merge(dgg, HUI, by=c("stationID", "jaar", "dagVjaar"), all.x=TRUE)
+      merge(data, HUI, by=c("stationID", "jaar", "dagVjaar"), all.x = TRUE)
 
    } else if (indexType == "VE") {
       # bereken VE-index:
-      VEI <- berekenVEIndex(dgg, startDate=startDate, endDate=endDate)
+      VEI <- calculateVEIndex(data, startDate = startDate, endDate = endDate)
       # voeg berekende waarden toe aan originele data-frame:
-      merge(dgg, VEI, by=c("stationID", "jaar", "dagVjaar"), all.x=TRUE)
+      merge(data, VEI, by=c("stationID", "jaar", "dagVjaar"), all.x = TRUE)
    } else {
-      dgg
+      data
    }
 
 }
 
-#' calculate the Huglin index
-#'
-#' This function calculates the Huglin index, which is one of the statistics that represents the total
+#' This function calculates the [Huglin index](http://www.brabantsewijnbouwers.nl/index.php?section=13&page=57&student=1171),
+#' which is one of the statistics that represents the total
 #' amount of heat in a season that is bennefical to the growth of plants. More specific, its used to
 #' measure the amount of warmth that is required by grapes to start growing, blosson and ripen.
 #'
@@ -55,9 +55,9 @@ voegToe <- function(dgg,
 #' @keywords date-conversion
 #' @export
 
-berekenHuglinIndex <- function(dgg,
-                               startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
-                               endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
+calculate_Huglin_index <- function(dgg,
+                                   startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
+                                   endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
    attach(dgg)
 
    # convert to day-of-year:
@@ -81,9 +81,8 @@ berekenHuglinIndex <- function(dgg,
    range[,c("stationID", "jaar", "dagVjaar", "somHuglinIndex")]
 }
 
-#' calculate the VE index
-#'
-#' This function calculates the VE index, which is one of the statistics that represents the total
+#' This function calculates the [VE index](http://www.brabantsewijnbouwers.nl/index.php?section=13&page=57&student=1171),
+#' which is one of the statistics that represents the total
 #' amount of heat in a season that is bennefical to the growth of plants. More specific, its used to
 #' measure the amount of warmth that is required by grapes to start growing, blosson and ripen.
 #'
@@ -102,9 +101,9 @@ berekenHuglinIndex <- function(dgg,
 #' @keywords value aggregation
 #' @export
 
-berekenVEIndex <- function(dgg,
-                           startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
-                           endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
+calculate_VE_index <- function(dgg,
+                               startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
+                               endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
 
    attach(dgg)
 

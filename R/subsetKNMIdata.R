@@ -1,5 +1,3 @@
-#' subset KNMI data-set
-#'
 #' This function returns a filtered subset of the KNMI data-set. The filtering is two-fold; select the most-used
 #' variables from the complete set of variables and include the data from the provided start-year upward to the most
 #' currrent date.
@@ -27,9 +25,9 @@
 #' }
 #' @export
 #'
-subsetKNMIdata <- function(data,
-                           startyear = 2006,
-                           variabeles = c("FG","TG","TN","TX","SQ","SP","Q","RH","NG")) {
+subset_KNMI_data <- function(data,
+                             startyear = 2006,
+                             variabeles = c("FG","TG","TN","TX","SQ","SP","Q","RH","NG")) {
 
    # subset on required variables
    data <- data[, c("STN","YYYYMMDD", variabeles)]

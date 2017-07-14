@@ -1,5 +1,3 @@
-#' get Climate Data In Bulk
-#'
 #' This function retrieves raw climate data collected by the official KNMI weather stations. It is optimised for
 #' retrieving large sets of data that have been prepared by the KNMI for download. If a year in the past is selected,
 #' the call is forwarded to the function 'getClimateDataSet()'. The function 'getClimateDataSet()' in this package is
@@ -59,9 +57,9 @@
 #' }
 #' @keywords historic weather data
 #' @export
-getClimateDataInBulk <- function(station = "ALL",
-                                 from = paste(format(today(), format="%Y"), "0101", sep=""),
-                                 to = format(today()-1, format="%Y%m%d")) {
+get_climate_data_in_bulk <- function(station = "ALL",
+                                     from = paste(format(today(), format="%Y"), "0101", sep=""),
+                                     to = format(today()-1, format="%Y%m%d")) {
 
    thisYear <- format(today(), format="%Y")
    fromYear <- substr(from, 1, 4)

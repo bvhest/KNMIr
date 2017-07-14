@@ -1,5 +1,3 @@
-#' get Climate Data Set
-#'
 #' This function retrieves raw climate data collected by the official KNMI measurement stations for a specific station
 #' and/or date-range. It uses the, somewhat slower, KNMI-API to collect the data.
 #' The function 'retrieveHistoricData()' in this package is optimized to collect data for larger date-ranges (e.g.
@@ -59,7 +57,7 @@
 #' }
 #' @keywords historic weather data
 #' @export
-getClimateDataSet <- function(stationID = "ALL",
+get_climate_data_set <- function(stationID = "ALL",
                               from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
                               to = format(Sys.Date()-1, format = "%Y%m%d")) {
 
