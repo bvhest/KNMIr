@@ -1,12 +1,23 @@
-#' This function returns a filtered subset of the KNMI data-set. The filtering is two-fold; select the most-used
-#' variables from the complete set of variables and include the data from the provided start-year upward to the most
-#' currrent date.
-#' More importantly, it modifies the column values to SI-units and it adds some helper-columns, like day-of-the-year,
+#' @title subset the KNMI data.
+#'
+#' @description
+#' \code{subset_KNMI_data} returns a filtered subset of the KNMI data-set.
+#'
+#' @details
+#' The function \code{subset_KNMI_data} can only be applied to the raw measurement data obtained with the functions
+#' \code{\link{get_climate_data_api}}, \code{\link{get_climate_data_zip}}, \code{\link{get_6day_weather_forecast}}.
+#'
+#' It's a convenience function; the results can also be obtained in other ways.
+#'
+#' The filtering is two-fold; select the most-used variables from the complete set of variables and
+#' include the data from the provided start-year upward to the most currrent date.
+#'
+#' More importantly, this function modifies the column values to SI-units and it adds some helper-columns, like day-of-the-year,
 #' weeknumber, daynumner, year.
 #'
 #' @param data data-frame with KNMI-data that has been obtained with the function 'getClimateDateSet' or 'getClimateDateInBulk'.
 #' @param startyear start-year for the selection. Default is 2006. Note that the end-year is always the most current year in the data-set.
-#' @param variabeles list with variables that should be returned. Default is ("FG","TG","TN","TX","SQ","SP","Q","RH","NG").
+#' @param variables list with variables that should be returned from the data-frame. Default is ("FG","TG","TN","TX","SQ","SP","Q","RH","NG").
 #'
 #' @return data-frame met subset van de KNMI-data.
 #' @format The default data frame contains the following columns:
@@ -27,10 +38,10 @@
 #'
 subset_KNMI_data <- function(data,
                              startyear = 2006,
-                             variabeles = c("FG","TG","TN","TX","SQ","SP","Q","RH","NG")) {
+                             variables = c("FG","TG","TN","TX","SQ","SP","Q","RH","NG")) {
 
    # subset on required variables
-   data <- data[, c("STN","YYYYMMDD", variabeles)]
+   data <- data[, c("STN","YYYYMMDD", variables)]
    # subset on required years
    data <- data[data$YYYYMMDD >= paste(startyear,"0101", sep=""), ]
 
@@ -38,16 +49,15 @@ subset_KNMI_data <- function(data,
    return(tidyKNMIdata(data))
 }
 
-
 tidyKNMIdata <- function(data) {
 
    # 3) separate date-string into year, month, day
-   data$datum <- as.Date(as.character(data$datum), format="%Y%m%d")
-   data$dagVjaar <- yday(data$datum)
-   data$jaar <- year(data$datum)
-   data$mnd <- month(data$datum)
-   data$week <- week(data$datum)
-   data$dag <- day(data$datum)
+   data$date <- as.Date(as.character(data$YYYYMMDD), format="%Y%m%d")
+   data$doy <- yday(data$date)
+   data$year <- year(data$date)
+   data$month <- month(data$date)
+   data$week <- week(data$date)
+   data$day <- wday(data$date)
 
    # ugly, but working...
    # 4a) convert temp to degrees Celcius

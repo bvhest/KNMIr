@@ -1,9 +1,13 @@
-#' This function provides meaningfull names for the different variables.
+#' @title rename columns in the raw KNMI dataset.
 #'
-#' @param data data-frame with KNMI-data that has been obtained with the function 'getClimateDateSet()',
-#' 'getClimateDateInBulk()' or 'subsetKNMIdata()'.
+#' @description
+#' \code{rename_columns_KNMI_data} provides more readable names for the different variables.
+#'
+#' @param data data-frame with KNMI-data that has been obtained with the function \code{\link{get_climate_data_api}},
+#' \code{\link{get_climate_data_zip}}, \code{\link{get_6day_weather_forecast}} or \code{\link{subset_KNMI_data}}.
 #'
 #' @return data-frame met subset van de KNMI-data.
+#' @import data.table
 #' @export
 #'
 rename_columns_KNMI_data <- function(data) {
@@ -18,7 +22,7 @@ rename_columns_KNMI_data <- function(data) {
                        "VVN","VVNH","VVX","VVXH",
                        "NG",
                        "UG","UX","UXH","UN","UNH")
-   nieuwekolomnamen <- c("stationID", "datum", "VectorgemiddeldeWindrichting", "Vectorgemiddeldewindsnelheid",
+   nieuwekolomnamen <- c("stationID", "YYYYMMDD", "VectorgemiddeldeWindrichting", "Vectorgemiddeldewindsnelheid",
                          "gemWind","maxWind", "uurMaxWind", "minWind", "uurMinWind", "maxWindstoot", "uurMaxWindstoot",
                          "gemTemp", "minTemp", "uurMinTemp", "maxTemp", "uurMaxTemp", "minTemp10cm", "dagdeelMinTemp10cm",
                          "zon", "percZon", "straling", "duurNeerslag",
@@ -34,7 +38,9 @@ rename_columns_KNMI_data <- function(data) {
 }
 
 # function to rename column-names when not all columns are present.
+#
 # source: http://stackoverflow.com/questions/29380447/using-data-tablesetnames-when-some-column-names-might-not-be-present
+#
 setNames <- function(x, old, new, allow.absent.cols = TRUE) {
    if (!allow.absent.cols) {
       r <- setnames(x, old, new)

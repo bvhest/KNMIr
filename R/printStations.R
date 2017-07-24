@@ -1,5 +1,8 @@
-#' Simple helper function to print the id's and names of the KNMI measurement
-#' stations and if they are active or not to the console.
+#' @title list KNMI measurement stations.
+#'
+#' @description
+#' \code{list_stations} list the id's and names of the KNMI measurement
+#' stations and if they are active or not.
 #'
 #' @param active boolean to select only currently active stations. Default =
 #'   TRUE.
@@ -10,7 +13,7 @@
 #'   still active; }
 #' @keywords list weather stations
 #' @export
-print_stations <- function(active = TRUE) {
+list_stations <- function(active = TRUE) {
 
   data(stations)
 
@@ -23,5 +26,5 @@ print_stations <- function(active = TRUE) {
 
   selected_stations <- selected_stations[, c("station", "plaats", "active")]
 
-  print(selected_stations)
+  return(selected_stations)
 }

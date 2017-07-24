@@ -1,4 +1,7 @@
-#' convert a 'day-of-the-year'-value into a date.
+#' @title day-of-year to date  conversion
+#'
+#' @description
+#' \code{day_of_year2date} converts a 'day-of-the-year'-value into a date.
 #'
 #' @param doy the day-of-the-year that needs to be converted. Integer.
 #' @param year the year for which the day-of-the-year is applicable. Integer. Default is the current year.
@@ -6,9 +9,8 @@
 #' @keywords date-conversion
 #' @export
 #' @examples
-#' dayOfYear2Date(1) # '01-01-2017', when executed in the year 2017.
-#' dayOfYear2Date(1, year=2010) # '01-01-2010'
-#' dayOfYear2Date(0) # 'NA'
+#' day_of_year2date(1) # '01-01-2017', when executed in the year 2017.
+#' day_of_year2date(1, year=2010) # '01-01-2010'
 
 day_of_year2date <- function(doy, year = format(Sys.Date(), format="%Y")){
    if(as.integer(doy) < 1 || as.integer(doy) > 366)

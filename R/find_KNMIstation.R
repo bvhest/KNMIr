@@ -1,19 +1,25 @@
-#' This function returns the KNMI measurement station that is closed to the
-#' provided location. One can select from the active stations (active = TRUE,
+#' @title find the nearest KNMI station
+#'
+#' @description
+#' \code{find_nearest_KNMI_station} returns the KNMI measurement station that is closed to the
+#' provided location.
+#'
+#' @details
+#' One can select from the active stations (active = TRUE,
 #' the default) or all stations (active = FALSE).
 #'
 #' @param location data-frame with a lat/lon-column (using the WGS84 coordinate
 #'   system).
 #' @param active boolean to select only currently active stations. Default =
 #'   TRUE.
-#'
 #' @return data-frame with the id, name, url to station information and the
 #'   lat/lon of the nearest KNMI-station.
 #' @export
 #'
 find_nearest_KNMI_station <- function(location, active = TRUE) {
+  data("stations")
   # perform some sanity checks
-  if(length(location) > 1)
+  if(nrow(location) > 1)
     stop("The location-parameter must contain a single location, not ", length(location), " locations.")
 
   # find the nearest station
@@ -23,11 +29,13 @@ find_nearest_KNMI_station <- function(location, active = TRUE) {
   if (active) {
     # if the einddatum (enddate) has a value, this value is always in the past
     # and the station is inactive, if it's NA the station is active.
-    result <- arrange(distance.to.stations, distance.to.stations$distance)[is.na(distance.to.stations$einddatum) & 1, c("station", "plaats", "info", "lat", "lon")]
+    result <- plyr::arrange(distance.to.stations,
+                            distance.to.stations$distance)[is.na(distance.to.stations$einddatum), c("station", "plaats", "lat", "lon", "info")]
   } else {
-    result <- arrange(distance.to.stations, distance.to.stations$distance)[1, c("station", "plaats", "info", "lat", "lon")]
+    result <- plyr::arrange(distance.to.stations,
+                            distance.to.stations$distance)[, c("station", "plaats", "lat", "lon", "info")]
   }
-  return(result)
+  return(result[1,])
 }
 
 
