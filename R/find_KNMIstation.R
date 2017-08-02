@@ -30,10 +30,10 @@ find_nearest_KNMI_station <- function(location, active = TRUE) {
     # if the einddatum (enddate) has a value, this value is always in the past
     # and the station is inactive, if it's NA the station is active.
     result <- plyr::arrange(distance.to.stations,
-                            distance.to.stations$distance)[is.na(distance.to.stations$einddatum), c("station", "plaats", "lat", "lon", "info")]
+                            distance.to.stations$distance)[is.na(distance.to.stations$einddatum), c("stationID", "plaats", "lat", "lon", "info")]
   } else {
     result <- plyr::arrange(distance.to.stations,
-                            distance.to.stations$distance)[, c("station", "plaats", "lat", "lon", "info")]
+                            distance.to.stations$distance)[, c("stationID", "plaats", "lat", "lon", "info")]
   }
   return(result[1,])
 }

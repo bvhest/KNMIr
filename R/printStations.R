@@ -24,7 +24,7 @@ list_stations <- function(active = TRUE) {
   }
   selected_stations$active <- is.na(selected_stations$einddatum)
 
-  selected_stations <- selected_stations[, c("station", "plaats", "active")]
+  selected_stations <- selected_stations[, c("stationID", "plaats", "active")]
 
   return(selected_stations)
 }

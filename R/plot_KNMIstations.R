@@ -31,7 +31,7 @@ plot_stations <- function(active = TRUE) {
     selected_stations <- stations
   }
   # add station labels
-  selected_stations$text <- paste(selected_stations$station, selected_stations$plaats)
+  selected_stations$text <- paste(selected_stations$stationID, selected_stations$plaats)
 
   p <- ggmap::ggmap(map) +
        ggplot2::geom_point(mapping = aes(x = lon, y = lat, color = !is.na(einddatum)),

@@ -78,7 +78,8 @@ get_6day_weather_forecast <- function() {
       voorspelling$minTempSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(minTemp[i])))
       # gemTemp
       voorspelling$gemTemp[i] <- mean(c(voorspelling$minTemp[i], voorspelling$maxTemp[i]))
-      voorspelling$gemTempSD[i] <- mean(c(voorspelling$minTempSD[i], voorspelling$maxTempSD[i]))
+      voorspelling$gemTempSD[i] <- 
+        sqrt((voorspelling$minTempSD[i]*voorspelling$minTempSD[i] + voorspelling$maxTempSD[i]*voorspelling$maxTempSD[i]) / 2)
       # neerslag
       voorspelling$neerslag[i] <- mean(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
       voorspelling$neerslagSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(neerslag[i])))

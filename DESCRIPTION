@@ -1,7 +1,8 @@
 Package: KNMIr
+Version: 0.2.0
+Date: 2017-07-31
 Type: Package
 Title: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI
-Version: 0.2.0
 Author: Bart van Hest [aut, cre]
 Maintainer: Bart van Hest <hestbv@gmail.com>
 Description: This package provides functions to retrieve raw and processed climate

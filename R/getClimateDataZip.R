@@ -84,7 +84,7 @@ get_climate_data_zip <- function(station = "ALL",
 
    } else {
       # retrieve prepared download-files from the KNMI website
-      if(station=='ALL' & fromYear == thisYear) {
+      if(station == 'ALL' & fromYear == thisYear) {
         link <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/jaar.zip"
         file <- "jaar.txt"
       }
