@@ -172,8 +172,8 @@ get_14day_weather_forecast <- function() {
    # haal 6-daagse voorspelling:
    baseURL <- "https://www.weerplaza.nl/nederland/gilze-rijen/9950/"
    pagina <- xml2::read_html(baseURL)
-   weather_table <- html_nodes(pagina, xpath = '//table[@class="hasChart" or @class=""]')
-   weather_row <- html_nodes(weather_table, xpath = '//table[@class="hasChart" or @class=""]/tbody/tr')
+   weather_table <- rvest::html_nodes(pagina, xpath = '//table[@class="hasChart" or @class=""]')
+   weather_row <- rvest::html_nodes(weather_table, xpath = '//table[@class="hasChart" or @class=""]/tbody/tr')
    # 10 rijen:
    # rij 1: datum + samenvatting
    # rij 2: zonkans
@@ -193,7 +193,7 @@ get_14day_weather_forecast <- function() {
    percZon <- rvest::html_nodes(weather_row, xpath = 'td/div[@class="orange"]')
    wind <- rvest::html_nodes(weather_row, xpath = 'td/div[@class="hide"]')
 
-   datum <- unique(html_text(datum))
+   datum <- unique(rvest::html_text(datum))
    size <- length(datum)
    voorspelling <- data.frame(station = rep("260", size),
                               YYYYMMDD = rep("20000101", size),

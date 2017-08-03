@@ -217,6 +217,53 @@ Note: the reason that the boxplot's are not exactly centered on the long-term av
 A second observation is that this year we are about 20 days, so almost three weeks, ahead of the long-term average.
 
 
+## Weerplaza 14-day weather forecast
+
+Weerplaza provides a [fourteen-day weather forecast](https://www.weerplaza.nl/nederland/) on it's website. This forecast 
+is available for most major cities.
+
+Let's add the forecast to the previous plot.
+
+```{r get_forecast14, INFO = FALSE, warning = FALSE, message = FALSE}
+# get the fourteen-day weather forecast.
+forecast14 <- get_14day_weather_forecast()
+# add the Huglin-index, after renaming the columns and adding the stationID.
+forecast14 <- forecast14 %>%
+   rename_columns_KNMI_data() %>%
+   mutate(stationID = "260") %>% # 260 is the measurement station at De Bilt
+   add_degree_days(dggType = "Huglin")
+
+forecast14$somHuglinIndex <- forecast14$somHuglinIndex + maxHuglin
+
+# pretend that the forecast is also valid for Gilze-Rijen:
+title <- "Forecasted cumulative Huglin-index 2017 vs long-term average"
+subtitle <- paste("station: Gilze-Rijen (NL), climate data: KNMI, date:",format(Sys.Date(), format="%d-%m-%Y"), sep=" ")
+
+print(p + 
+  geom_line(data = forecast14,
+            aes(x = doy, y = somHuglinIndex),
+            color = "#00FFFF", show.legend = FALSE, size = 2) + 
+  geom_line(data = forecast,
+            aes(x = doy, y = somHuglinIndex),
+            color = "#0000FF", show.legend = FALSE, size = 2) + 
+  ggtitle(label = title,
+          subtitle = subtitle) +
+  annotate("text",
+           label = round(max(forecast$somHuglinIndex),0),
+           x = max(forecast$doy)-15,
+           y = round(max(data$somHuglinIndex),0)+100,
+           size = 4,
+           colour = "black") +
+  annotate("text",
+           label = round(max(forecast14$somHuglinIndex),0),
+           x = max(forecast14$doy)-15,
+           y = round(max(data$somHuglinIndex),0)+200,
+           size = 4,
+           colour = "black")
+  )
+```
+
+
 
 ## Feedback
 
