@@ -4,3 +4,5 @@
 .Rbuildignore
 literatuur
 man
+inst/doc
+README.md
