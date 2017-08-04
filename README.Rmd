@@ -1,7 +1,8 @@
 ---
-output:
-  md_document:
-    variant: markdown_github
+title: "KNMIr-package"
+author: "Bart van Hest"
+date: "`r format(Sys.Date())`"
+output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
