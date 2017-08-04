@@ -6,12 +6,12 @@ output:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# KNMI-package - functions for retrieving climate data from the Dutch meteorological institute KNMI.
+# KNMIr-package - R functions for retrieving climate data from the Dutch meteorological institute KNMI.
 
 ## Description
 
 This package provides functions to retrieve climate data (up to 'yesterday') for the offical KNMI weather stations from 
-the official Dutch meteorological institute (KNMI). 
+the official Dutch meteorological institute (KNMI). In addition, a six day forecast can be retrieved from the KNMI-website and a 14-day forecast from the Weerplaza-website.
 The data-set contains multiple variables. 
 For some stations, data goes back to 1900. 
 
@@ -19,13 +19,4 @@ The data can be subsetted based on year and specified variables. The returned da
 necessary. 
 Several additional functions are available, such as a function that calculate the Huglin- or VE-index. 
 
-The package also contains two KNMI datasets with the measurement stations and with a reference set of long term 
-averages over the period 1999-2014.
-
-ToDo: 
-
-  - DONE: add the data from the sea-based stations
-  - turn station-parameter in stations-parameter (so that a list of stations can be downloaded in one call)
-  - DONE: retrieve the six day forecast from the KNMI-website. 
-  - provide English names for the variable-codes, next to the Dutch translations.
-  - change source of KNMI stations to http://projects.knmi.nl/datacentrum/catalogus/catalogus/catalogus-gegevens-overzicht.html
+The package also contains two KNMI datasets, one with the measurement stations, both on and and at sea, and the other with a reference set of long term averages over the period 1999-2014.

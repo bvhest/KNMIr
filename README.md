@@ -1,20 +1,12 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-KNMI-package - functions for retrieving weather data from the Dutch meteorological institute KNMI.
-==================================================================================================
+KNMIr-package - R functions for retrieving climate data from the Dutch meteorological institute KNMI.
+=====================================================================================================
 
 Description
 -----------
 
-This package provides functions to retrieve historic weather data from both the official Dutch meteorological institute (KNMI) and from the experimental WOW.nl site.
+This package provides functions to retrieve climate data (up to 'yesterday') for the offical KNMI weather stations from the official Dutch meteorological institute (KNMI). In addition, a six day forecast can be retrieved from the KNMI-website and a 14-day forecast from the Weerplaza-website. The data-set contains multiple variables. For some stations, data goes back to 1900.
 
-The official site only returns data from the offical KNMI weather stations. For some stations, data goes back to 1900. The experimental stations have a limited set of variables and limited history (&gt;Februari 16th 2015). In addition, a seven day forecast can be retrieved from the KNMI-website.
+The data can be subsetted based on year and specified variables. The returned data is converted to SI-units, when necessary. Several additional functions are available, such as a function that calculate the Huglin- or VE-index.
 
-The data can be subsetted based on year and specified variables. The returned data is converted to SI-units, when necessary. Several processing functions are available, such as a function that calculates the Huglin- or VE-index. The package also contains two KNMI dataset with all historic data and with long term averages per decenium.
-
-ToDo
-----
-
-1.  integreer klimaat data DWD (DE) :
-    nb nu mogelijk met rdwd-packages
-2.  integreer klimaat data KMI (BE) :
-    nb data te downloaden vanaf <http://www.meteo.be/meteo/view/nl/27484519-Klimaat+in+uw+gemeente.html>
+The package also contains two KNMI datasets, one with the measurement stations, both on and and at sea, and the other with a reference set of long term averages over the period 1999-2014.
