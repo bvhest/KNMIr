@@ -33,5 +33,3 @@ vignette("HowToUseKNMIr")
 ```
 
 More information can be found in the package documentation.
-=======
-See the vignette for some examples.
