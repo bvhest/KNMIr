@@ -19,7 +19,7 @@
 #'       and return_only_land = FALSE, the data for all stations on land and sea is returned. With return_only_land = TRUE
 #'       (the default) only the data for the land-based stations is returned.
 #'
-#' @param station ID for the KNMI station. The available stations can be retrieved with the function 'list_stations()'. Defaults to "ALL". . Note: a string of characters in the format 'iii'.
+#' @param stationID ID for the KNMI station. The available stations can be retrieved with the function 'list_stations()'. Defaults to "ALL". . Note: a string of characters in the format 'iii'.
 #' @param from startdate for the time-window. Defaults to the start of the current year. If the returned data is from a later date, no prior data is available for the selected station. Note: a string of characters in the format 'yyyymmdd'.
 #' @param to enddate for the time-window. Defaults to yesterday. If the returned data is from an earlier date, no recent data is available for the selected station. Note: a string of characters in the format 'yyyymmdd'.
 #' @param return_only_land boolean indicating that only the data for the land-based stations is returned. Defaults to "TRUE".
@@ -70,7 +70,7 @@
 #' }
 #' @keywords historic weather data
 #' @export
-get_climate_data_zip <- function(station = "ALL",
+get_climate_data_zip <- function(stationID = "ALL",
                                  from = paste(format(Sys.Date(), format="%Y"), "0101", sep=""),
                                  to = format(Sys.Date()-1, format="%Y%m%d"),
                                  return_only_land = TRUE) {
