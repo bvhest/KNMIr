@@ -14,6 +14,7 @@
 #'   TRUE.
 #' @return data-frame with the id, name, url to station information and the
 #'   lat/lon of the nearest KNMI-station.
+#' @import dplyr
 #' @export
 #'
 find_nearest_KNMI_station <- function(location, active = TRUE) {
@@ -26,16 +27,20 @@ find_nearest_KNMI_station <- function(location, active = TRUE) {
   distances <- as.data.frame(earth.distance(stations, location))
   names(distances)[1] <- "distance"
   distance.to.stations <- cbind(stations, distances)
+
   if (active) {
     # if the einddatum (enddate) has a value, this value is always in the past
     # and the station is inactive, if it's NA the station is active.
-    result <- plyr::arrange(distance.to.stations,
-                            distance.to.stations$distance)[is.na(distance.to.stations$einddatum), c("stationID", "plaats", "lat", "lon", "info")]
-  } else {
-    result <- plyr::arrange(distance.to.stations,
-                            distance.to.stations$distance)[, c("stationID", "plaats", "lat", "lon", "info")]
+    distance.to.stations <- distance.to.stations %>%
+      dplyr::filter(is.na(einddatum))
   }
-  return(result[1,])
+
+  result <- distance.to.stations %>%
+    dplyr::arrange(distance) %>%
+    dplyr::select(stationID, plaats, lat, lon, info) %>%
+    dplyr::slice(1L)
+
+  return(result)
 }
 
 

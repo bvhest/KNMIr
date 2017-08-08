@@ -1,23 +1,24 @@
 Package: KNMIr
-Version: 0.2.0
-Date: 2017-07-31
+Version: 0.3.0
+Date: 2017-08-08
 Type: Package
 Title: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI
 Author: Bart van Hest [aut, cre]
 Maintainer: Bart van Hest <hestbv@gmail.com>
 Description: This package provides functions to retrieve raw and processed climate
-    data from the official Dutch meteorological institute (KNMI). For some stations data goes back to 1900.
+    data from the official Dutch meteorological institute (KNMI). For some stations data goes back to 1900. Two functions 
+    are provied to retrieve the 6-day weather forecast from the KNMI and the 14-day forecast from the Weerplaza-website.
     With helper-functions, the data can be subsetted based on year and specified variables. The returned
     data is converted to SI-units, when necessary. Several additional helper functions
     are available, such as a function that calculates the Huglin- or VE-index.
-    The package also contains two KNMI datasets with all measurement stations and with 
+    The package also contains two KNMI datasets; one with all measurement stations and one with 
     long term averages from 2000-2015.
 Depends:
     R (>= 3.2.1)
 Imports:
-    data.table,
-    plyr,
     dplyr,
+    plyr,
+    data.table,
     stringr,
     RCurl,
     rvest,

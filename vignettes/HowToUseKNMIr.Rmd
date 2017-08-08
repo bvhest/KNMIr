@@ -264,6 +264,43 @@ print(p +
 ```
 
 
+## Climate characteristics
+
+The characteristics of the climate for a certain location can be shown with the function 'r plot_climate_diagram'. The four characteristics mean temperature, precipation, sun hours and wind can be selected for presentation.
+
+```{r plot_climate_diagram temp, INFO = FALSE, warning = FALSE, message = FALSE}
+# get data for the measurement station Gilze-Rijen (id=350) from Januanri 1st, 1981 up to the most recent date provided by the KNMI (which is 'today'-1 day).
+data <- get_climate_data_api(stationID = 350, from="19810101") %>% 
+   subset_KNMI_data(startyear = 1981, variables = c("FG", "TG", "TN", "TX", "SQ", "SP", "Q", "RH", "NG")) %>%
+   rename_columns_KNMI_data()
+
+plot_climate_diagram(data = data,
+                     column = "gemTemp",
+                     startYear = 1981,
+                     endYear = 2010,
+                     currentYear = 2017)
+```
+
+And the same for the precipation, sun hours and wind:
+```{r plot_climate_diagram others, ECHO = FALSE, INFO = FALSE, warning = FALSE, message = FALSE}
+plot_climate_diagram(data = data,
+                     column = "dagTotaalNeerslag",
+                     startYear = 1981,
+                     endYear = 2010,
+                     currentYear = 2017)
+plot_climate_diagram(data = data,
+                     column = "gemWind",
+                     startYear = 1981,
+                     endYear = 2010,
+                     currentYear = 2017)
+plot_climate_diagram(data = data,
+                     column = "zon",
+                     startYear = 1981,
+                     endYear = 2010,
+                     currentYear = 2017)
+```
+
+
 
 ## Feedback
 

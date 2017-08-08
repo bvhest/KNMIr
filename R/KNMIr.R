@@ -12,5 +12,7 @@
 #'
 #' @docType package
 #' @name KNMIr
-
+#' @author Bart van Hest, \email{hestbv@@gmail.com}, Juli 2017
+#' @keywords package documentation
+#' @seealso German climate data: \url{https://github.com/brry/rdwd}
 NULL
