@@ -158,7 +158,7 @@ calculate_VE_index <- function(dgg,
    # bereken de dagwaarde:
    range$VEIndex <- pmax((range$gemTemp - 10), 0)
    # bereken nu de cumulatieve HuglinIndex:
-   range <- plyr::ddply(range, .(stationID, jaar), transform, somVEIndex = cumsum(VEIndex))
+   range <- plyr::ddply(range, .(stationID, year), transform, somVEIndex = cumsum(VEIndex))
 
 #   detach(name = dgg)
    return(range[,c("stationID", "year", "doy", "somVEIndex")])
