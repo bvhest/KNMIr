@@ -304,4 +304,4 @@ plot_climate_diagram(data = data,
 
 ## Feedback
 
-Feedback on this package, or this vignette, can be provided via [github](https://github.com/UdenVH/KNMIr) or by [e-mail](udenvh@gmail.com)!
+Feedback on this package, or this vignette, can be provided via [github](https://github.com/BvHest/KNMIr) or by [e-mail](hestbv@gmail.com)!

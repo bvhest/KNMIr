@@ -1,4 +1,4 @@
-#' @title get KNMI climate data.
+#' @title get KNMI climate day data.
 #'
 #' @description
 #' \code{get_climate_data_api} retrieves KNMI data through the KNMI-API.

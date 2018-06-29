@@ -1,10 +1,10 @@
 Package: KNMIr
+Title: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI
 Version: 0.3.0
 Date: 2017-08-08
 Type: Package
-Title: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI
-Author: Bart van Hest [aut, cre]
-Maintainer: Bart van Hest <hestbv@gmail.com>
+Authors@R: person("Bart", "van Hest", email = "hestbv@gmail.com",
+                  role = c("aut", "cre"))
 Description: This package provides functions to retrieve raw and processed climate
     data from the official Dutch meteorological institute (KNMI). For some stations data goes back to 1900. Two functions 
     are provied to retrieve the 6-day weather forecast from the KNMI and the 14-day forecast from the Weerplaza-website.

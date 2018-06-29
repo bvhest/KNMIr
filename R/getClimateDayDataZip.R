@@ -1,4 +1,4 @@
-#' @title get KNMI climate data from zip-files.
+#' @title get KNMI climate day data from zip-files.
 #'
 #' @description
 #' \code{get_climate_data_zip} retrieves KNMI data by downloading prepared KNMI zip-files.
