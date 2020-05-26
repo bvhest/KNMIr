@@ -41,30 +41,45 @@ get_6day_weather_forecast <- function() {
    pagina <- xml2::read_html(baseURL)
 
    # extraheer waarden in lists:
-   datum <- rvest::html_nodes(pagina, css = '.weather-map__table-cell:nth-child(2)')
-   maxTemp <- rvest::html_nodes(pagina, css = '.weather-map__table-cell:nth-child(4)')
-   minTemp <- rvest::html_nodes(pagina, css = '.weather-map__table-cell:nth-child(5)')
-   neerslag <- rvest::html_nodes(pagina, css = '.weather-map__table-cell:nth-child(6)')
-   neerslagKans <- rvest::html_nodes(pagina, css = '.weather-map__table-cell:nth-child(7)')
-   percZon <- rvest::html_nodes(pagina, css = '.weather-map__table-cell:nth-child(8)')
-   wind <- rvest::html_nodes(pagina, css = '.weather-map__table-cell:nth-child(9)')
+   datum <-
+     rvest::html_nodes(pagina,
+                       css = '.weather-map__table-cell:nth-child(2)')
+   maxTemp <-
+     rvest::html_nodes(pagina,
+                       css = '.weather-map__table-cell:nth-child(4)')
+   minTemp <-
+     rvest::html_nodes(pagina,
+                       css = '.weather-map__table-cell:nth-child(5)')
+   neerslag <-
+     rvest::html_nodes(pagina,
+                       css = '.weather-map__table-cell:nth-child(6)')
+   neerslagKans <-
+     rvest::html_nodes(pagina,
+                       css = '.weather-map__table-cell:nth-child(7)')
+   percZon <-
+     rvest::html_nodes(pagina,
+                       css = '.weather-map__table-cell:nth-child(8)')
+   wind <-
+     rvest::html_nodes(pagina,
+                       css = '.weather-map__table-cell:nth-child(9)')
 
    size <- length(datum)
-   voorspelling <- data.frame(station = rep("260", size),
-                              YYYYMMDD = rep("20000101", size),
-                              date = as.Date("2000-01-01") + 1:size, # just dummy dates
-                              maxTemp = double(size),
-                              maxTempSD = double(size),
-                              minTemp = double(size),
-                              minTempSD = double(size),
-                              gemTemp = double(size),
-                              gemTempSD = double(size),
-                              neerslag = double(size),
-                              neerslagSD = double(size),
-                              neerslagKans = double(size),
-                              percZon = double(size),
-                              windkracht = double(size),
-                              stringsAsFactors = FALSE)
+   voorspelling <-
+     data.frame(station = rep("260", size), # De Bilt
+                YYYYMMDD = rep("20000101", size),
+                date = as.Date("2000-01-01") + 1:size, # just dummy dates
+                maxTemp = double(size),
+                maxTempSD = double(size),
+                minTemp = double(size),
+                minTempSD = double(size),
+                gemTemp = double(size),
+                gemTempSD = double(size),
+                neerslag = double(size),
+                neerslagSD = double(size),
+                neerslagKans = double(size),
+                percZon = double(size),
+                windkracht = double(size),
+                stringsAsFactors = FALSE)
 
    # nu alles in een loopje:
    for (i in 1:size) {
@@ -92,8 +107,9 @@ get_6day_weather_forecast <- function() {
    }
 
    # kolom-namen omzetten van leesbaar, naar  codes (kan weer worden teruggezet met de functie 'rename_columns()')
-   colnames(voorspelling) <- c("STN","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
-                               "RH","SD_neerslag","neerslagKans","SP","windkracht")
+   colnames(voorspelling) <-
+     c("STN","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
+       "RH","SD_neerslag","neerslagKans","SP","windkracht")
 
    # windkracht omzetten naar m/s:
    wind <- converteer_beaufort_schaal(voorspelling$windkracht)
@@ -107,27 +123,6 @@ get_6day_weather_forecast <- function() {
    voorspelling$day <- wday(voorspelling$date)
 
    return(voorspelling)
-}
-
-#
-# hulp-functie voor get_6day_weather_prediction
-#
-extraheer_numerieke_waarden <- function(html_node) {
-   text <- stringr::str_extract_all(rvest::html_text(html_node),
-                                    "\\(?[0-9,]+\\)?")[[1]]
-   numeriek <- as.numeric(text)
-   return(numeriek)
-}
-
-#
-# hulp-functie voor omzetten windkracht in Beaufort naar m/s
-#
-converteer_beaufort_schaal <- function(windkracht) {
-   data(beaufort_scale)
-   min_m_per_s <- beaufort_scale$min_m_per_s[match(windkracht, beaufort_scale$Beaufort)]
-   max_m_per_s <- beaufort_scale$max_m_per_s[match(windkracht, beaufort_scale$Beaufort)]
-
-   return(data.frame(minWind = min_m_per_s, maxWind = max_m_per_s))
 }
 
 #' @title Get fourteen-day weather forecast (Weerplaza).
@@ -171,9 +166,14 @@ get_14day_weather_forecast <- function() {
 
    # haal 6-daagse voorspelling:
    baseURL <- "https://www.weerplaza.nl/nederland/gilze-rijen/9950/"
+
    pagina <- xml2::read_html(baseURL)
-   weather_table <- rvest::html_nodes(pagina, xpath = '//table[@class="hasChart" or @class=""]')
-   weather_row <- rvest::html_nodes(weather_table, xpath = '//table[@class="hasChart" or @class=""]/tbody/tr')
+   weather_table <-
+     rvest::html_nodes(pagina,
+                       xpath = '//table[@class="hasChart" or @class=""]')
+   weather_row <-
+     rvest::html_nodes(weather_table,
+                       xpath = '//table[@class="hasChart" or @class=""]/tbody/tr')
    # 10 rijen:
    # rij 1: datum + samenvatting
    # rij 2: zonkans
@@ -185,31 +185,46 @@ get_14day_weather_forecast <- function() {
    # Nb elke rij bevat in de td-elementen een attribuut met de datum (@data-day)
 
    # extraheer waarden in lists:
-   datum <- rvest::html_nodes(weather_row, xpath = 'td/@data-day')
-   maxTemp <- rvest::html_nodes(weather_row, xpath = 'td/div[@class="red temp"]')
-   minTemp <- rvest::html_nodes(weather_row, xpath = 'td/div[@class="blue temp"]')
-   neerslag <- rvest::html_nodes(weather_row, xpath = 'td/div[@class="blue"][not(i/@class)]')
-   neerslagKans <- rvest::html_nodes(weather_row, xpath = 'td/div[@class="blue"][i/@class="fa fa-tint blue"]')
-   percZon <- rvest::html_nodes(weather_row, xpath = 'td/div[@class="orange"]')
-   wind <- rvest::html_nodes(weather_row, xpath = 'td/div[@class="hide"]')
+   datum <-
+     rvest::html_nodes(weather_row,
+                       xpath = 'td/@data-day')
+   maxTemp <-
+     rvest::html_nodes(weather_row,
+                       xpath = 'td/div[@class="red temp"]')
+   minTemp <-
+     rvest::html_nodes(weather_row,
+                       xpath = 'td/div[@class="blue temp"]')
+   neerslag <-
+     rvest::html_nodes(weather_row,
+                       xpath = 'td/div[@class="blue"][not(i/@class)]')
+   neerslagKans <-
+     rvest::html_nodes(weather_row,
+                       xpath = 'td/div[@class="blue"][i/@class="fa fa-tint blue"]')
+   percZon <-
+     rvest::html_nodes(weather_row,
+                       xpath = 'td/div[@class="orange"]')
+   wind <-
+     rvest::html_nodes(weather_row,
+                       xpath = 'td/div[@class="hide"]')
 
    datum <- unique(rvest::html_text(datum))
    size <- length(datum)
-   voorspelling <- data.frame(station = rep("260", size),
-                              YYYYMMDD = rep("20000101", size),
-                              date = as.Date("2000-01-01") + 1:size, # just dummy dates
-                              maxTemp = double(size),
-                              maxTempSD = double(size),
-                              minTemp = double(size),
-                              minTempSD = double(size),
-                              gemTemp = double(size),
-                              gemTempSD = double(size),
-                              neerslag = double(size),
-                              neerslagSD = double(size),
-                              neerslagKans = double(size),
-                              percZon = double(size),
-                              windkracht = double(size),
-                              stringsAsFactors = FALSE)
+   voorspelling <-
+     data.frame(station = rep("260", size),
+                YYYYMMDD = rep("20000101", size),
+                date = as.Date("2000-01-01") + 1:size, # just dummy dates
+                maxTemp = double(size),
+                maxTempSD = double(size),
+                minTemp = double(size),
+                minTempSD = double(size),
+                gemTemp = double(size),
+                gemTempSD = double(size),
+                neerslag = double(size),
+                neerslagSD = double(size),
+                neerslagKans = double(size),
+                percZon = double(size),
+                windkracht = double(size),
+                stringsAsFactors = FALSE)
 
    # nu alles in een loopje:
    for (i in 1:size) {
@@ -237,8 +252,9 @@ get_14day_weather_forecast <- function() {
    }
 
    # kolom-namen omzetten van leesbaar, naar  codes (kan weer worden teruggezet met de functie 'rename_columns()')
-   colnames(voorspelling) <- c("STN","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
-                               "RH","SD_neerslag","neerslagKans","SP","windkracht")
+   colnames(voorspelling) <-
+     c("STN","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
+       "RH","SD_neerslag","neerslagKans","SP","windkracht")
 
    # windkracht omzetten naar m/s:
    wind <- converteer_beaufort_schaal(voorspelling$windkracht)
@@ -253,3 +269,27 @@ get_14day_weather_forecast <- function() {
 
    return(voorspelling)
 }
+
+########################################################################################################################
+#
+# hulp-functies
+#
+########################################################################################################################
+
+# voor get_6day_weather_prediction
+extraheer_numerieke_waarden <- function(html_node) {
+  text <- stringr::str_extract_all(rvest::html_text(html_node),
+                                   "\\(?[0-9,]+\\)?")[[1]]
+  numeriek <- as.numeric(text)
+  return(numeriek)
+}
+
+# voor omzetten windkracht in Beaufort naar m/s
+converteer_beaufort_schaal <- function(windkracht) {
+  data(beaufort_scale)
+  min_m_per_s <- beaufort_scale$min_m_per_s[match(windkracht, beaufort_scale$Beaufort)]
+  max_m_per_s <- beaufort_scale$max_m_per_s[match(windkracht, beaufort_scale$Beaufort)]
+
+  return(data.frame(minWind = min_m_per_s, maxWind = max_m_per_s))
+}
+
