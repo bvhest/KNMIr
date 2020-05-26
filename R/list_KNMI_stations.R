@@ -13,18 +13,19 @@
 #'   still active; }
 #' @keywords list weather stations
 #' @export
-list_stations <- function(active = TRUE) {
+list_stations <-
+  function(active = TRUE) {
 
-  data(stations)
+    utils::data(stations)
 
-  if (active) {
-    selected_stations <- stations[is.na(stations$einddatum),]
-  } else {
-    selected_stations <- stations
+    if (active) {
+      selected_stations <- stations[is.na(stations$einddatum),]
+    } else {
+      selected_stations <- stations
+    }
+    selected_stations$active <- is.na(selected_stations$einddatum)
+
+    selected_stations <- selected_stations[, c("stationID", "plaats", "active")]
+
+    return(selected_stations)
   }
-  selected_stations$active <- is.na(selected_stations$einddatum)
-
-  selected_stations <- selected_stations[, c("stationID", "plaats", "active")]
-
-  return(selected_stations)
-}
