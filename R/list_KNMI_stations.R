@@ -3,6 +3,8 @@
 #' @description
 #' \code{list_stations} list the id's and names of the KNMI measurement
 #' stations and if they are active or not.
+#' Data from https://www.knmi.nl/nederland-nu/klimatologie/daggegevens,
+#' http://projects.knmi.nl/klimatologie/metadata/index.html
 #'
 #' @param active boolean to select only currently active stations. Default =
 #'   TRUE.
