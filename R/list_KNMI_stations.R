@@ -6,8 +6,11 @@
 #' Data from https://www.knmi.nl/nederland-nu/klimatologie/daggegevens,
 #' http://projects.knmi.nl/klimatologie/metadata/index.html
 #'
-#' @param active boolean to select only currently active stations. Default =
+#' @param is_active boolean to select only currently active stations. Default =
 #'   TRUE.
+#' @param  identifying_columns boolean to return only the staion identifying
+#' columns (including if a station is active). Default = FALSE (i.e. returning
+#' all columns).
 #' @return a data-frame.
 #' @format The returned data-frame contains the following columns: \itemize{
 #'   \item station  = ID of measurement station; \item plaats   = city closest
@@ -16,18 +19,26 @@
 #' @keywords list weather stations
 #' @export
 list_stations <-
-  function(active = TRUE) {
+  function(is_active = TRUE, identifying_columns = FALSE) {
 
     utils::data(stations)
 
-    if (active) {
-      selected_stations <- stations[is.na(stations$einddatum),]
-    } else {
-      selected_stations <- stations
-    }
-    selected_stations$active <- is.na(selected_stations$einddatum)
+    selected_stations <-
+      stations %>%
+      dplyr::mutate(active = is.na(einddatum)) %>%
+      dplyr::filter(if(is_active) active else TRUE)
 
-    selected_stations <- selected_stations[, c("stationID", "plaats", "active")]
+    # if (active) {
+    #   selected_stations <- stations[is.na(stations$einddatum),]
+    # } else {
+    #   selected_stations <- stations
+    # }
+    # selected_stations$active <- is.na(selected_stations$einddatum)
+
+    if (identifying_columns)
+      selected_stations <-
+        selected_stations %>%
+        dplyr::select(stationID, plaats, active)
 
     return(selected_stations)
   }
