@@ -65,7 +65,8 @@ get_6day_weather_forecast <- function() {
 
    size <- length(datum)
    voorspelling <-
-     data.frame(station = rep("260", size), # De Bilt
+     data.frame(stationID = rep("260", size), # De Bilt
+                station = rep("De Bilt", size),
                 YYYYMMDD = rep("20000101", size),
                 date = as.Date("2000-01-01") + 1:size, # just dummy dates
                 maxTemp = double(size),
@@ -108,7 +109,7 @@ get_6day_weather_forecast <- function() {
 
    # kolom-namen omzetten van leesbaar, naar  codes (kan weer worden teruggezet met de functie 'rename_columns()')
    colnames(voorspelling) <-
-     c("STN","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
+     c("STN","station","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
        "RH","SD_neerslag","neerslagKans","SP","windkracht")
 
    # windkracht omzetten naar m/s:
@@ -138,6 +139,7 @@ get_6day_weather_forecast <- function() {
 #'       combination of the European weather model ECMWF and an (unknown) American model (see
 #'       \url{https://www.weerplaza.nl/15daagse/}.
 #'
+#' @param station either the id or the name of a KNMI measurement station.
 #' @return a data frame.
 #' @format The returned data frame contains the following columns:
 #' \itemize{
@@ -164,7 +166,22 @@ get_6day_weather_forecast <- function() {
 #' @export
 get_14day_weather_forecast <-
   function(station = 260) {
+
+    # perform some sanity checks on the input
+    station_is_known <-
+      (station %in% stations$stationID | station %in% stations$plaats)
+
+    if(!station_is_known)
+      stop("The value for 'station' does not match any known KNMI measurement station.")
+
     # default station is 260 (De Bilt, KNMI)
+    if (is.numeric(station)) {
+      stationID = station
+      stationName = stations$plaats[stations$stationID == stationID]
+    } else {
+      stationName = station
+      stationID = stations$stationID[stations$plaats == stationName]
+    }
 
     # haal 6-daagse voorspelling:
     base_URL <- "https://www.weerplaza.nl/nederland/"
@@ -216,7 +233,8 @@ get_14day_weather_forecast <-
     datum <- unique(rvest::html_text(datum))
     size <- length(datum)
     voorspelling <-
-     data.frame(station = rep(station, size),
+     data.frame(stationID = rep(stationID, size),
+                station = rep(stationName, size),
                 YYYYMMDD = rep("20000101", size),
                 date = as.Date("2000-01-01") + 1:size, # just dummy dates
                 maxTemp = double(size),
@@ -259,7 +277,7 @@ get_14day_weather_forecast <-
 
     # kolom-namen omzetten van leesbaar, naar  codes (kan weer worden teruggezet met de functie 'rename_columns()')
     colnames(voorspelling) <-
-     c("STN","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
+     c("STN","station","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
        "RH","SD_neerslag","neerslagKans","SP","windkracht")
 
     # windkracht omzetten naar m/s:
