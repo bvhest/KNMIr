@@ -78,7 +78,7 @@ get_daily_data <-
       from <-
         lubridate::today() %>%
         lubridate::year() %>%
-        paste0(., "0101")
+        stringr::str_glue(., "0101")
     if (missing(to))
       to <-
         (lubridate::today() - 1) %>% # yesterday
@@ -118,7 +118,7 @@ get_daily_data <-
 
     data_daily <-
       readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
-      as_tibble()
+      dplyr::as_tibble()
 
     colnames(data_daily) <-
       c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N",
