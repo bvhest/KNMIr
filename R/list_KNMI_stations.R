@@ -27,7 +27,7 @@ list_stations <-
       stations %>%
       dplyr::mutate(active = is.na(einddatum)) %>%
       dplyr::filter(if(is_active) active else TRUE) %>%
-      as_tibble()
+      dplyr::as_tibble()
 
     if (identifying_columns)
       selected_stations <-
