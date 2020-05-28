@@ -11,7 +11,7 @@
 #' @param  identifying_columns boolean to return only the staion identifying
 #' columns (including if a station is active). Default = FALSE (i.e. returning
 #' all columns).
-#' @return a data-frame.
+#' @return a tibble.
 #' @format The returned data-frame contains the following columns: \itemize{
 #'   \item station  = ID of measurement station; \item plaats   = city closest
 #'   to the measurement station; \item active	  = indicates if the station is
@@ -26,7 +26,8 @@ list_stations <-
     selected_stations <-
       stations %>%
       dplyr::mutate(active = is.na(einddatum)) %>%
-      dplyr::filter(if(is_active) active else TRUE)
+      dplyr::filter(if(is_active) active else TRUE) %>%
+      as_tibble()
 
     # if (active) {
     #   selected_stations <- stations[is.na(stations$einddatum),]

@@ -21,7 +21,7 @@
 #' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
 #' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd', 'yyyymm' or 'yyyy'. Missing digits are replaced with the first day of the month and/or the first month of the year.
 #' @param to enddate for the time-window. Defaults to yesterday (most recent data provided by the KNMI). A string of characters in the format 'yyyymmdd', 'yyyymm' or 'yyyy'. Missing digits are replaced with the last day of the month and/or the last month of the year.
-#' @return a data frame.
+#' @return a tibble.
 #' @format The returned data frame contains the following columns:
 #' \itemize{
 #'   \item STN      = ID of measurementstation;
@@ -137,7 +137,7 @@ get_daily_data <-
 #' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
 #' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd'.
 #' @param to enddate for the time-window. Defaults to yesterday. A string of characters in the format 'yyyymmdd'.
-#' @return a data frame.
+#' @return a tibble.
 #' @keywords historic weather data
 #' @export
 get_climate_day_data_api <-
@@ -163,7 +163,7 @@ get_climate_day_data_api <-
 #' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
 #' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd'.
 #' @param to enddate for the time-window. Defaults to yesterday. A string of characters in the format 'yyyymmdd'.
-#' @return a data frame.
+#' @return a tibble.
 #' @keywords historic weather data
 #' @export
 get_climate_data_api <-
