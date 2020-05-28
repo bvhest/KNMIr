@@ -14,7 +14,6 @@
 #'   TRUE.
 #' @return data-frame with the id, name, url to station information and the
 #'   lat/lon of the nearest KNMI-station.
-#' @import dplyr
 #' @export
 #'
 find_nearest_KNMI_station <-
