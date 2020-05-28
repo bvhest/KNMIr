@@ -14,6 +14,7 @@
 #' @format The returned data frame contains the following columns:
 #' \itemize{
 #'   \item STN      ID of measurementstation;
+#'   \item station  Name of the measurement station;
 #'   \item YYYYMMDD Datum (YYYY=jaar MM=maand DD=dag) in karakter-formaat;
 #'   \item date     date in date-format;
 #'   \item TN	Minimum temperatuur (in 0.1 graden Celsius);
@@ -34,97 +35,99 @@
 #' @source \url{http://www.knmi.nl/nederland-nu/weer/verwachtingen}
 #' @keywords weather forecast
 #' @export
-get_6day_weather_forecast <- function() {
+#'
+get_6day_weather_forecast <-
+  function() {
 
-   # haal 6-daagse voorspelling:
-   baseURL <- "http://www.knmi.nl/nederland-nu/weer/verwachtingen"
-   pagina <- xml2::read_html(baseURL)
+     # haal 6-daagse voorspelling:
+     baseURL <- "http://www.knmi.nl/nederland-nu/weer/verwachtingen"
+     pagina <- xml2::read_html(baseURL)
 
-   # extraheer waarden in lists:
-   datum <-
-     rvest::html_nodes(pagina,
-                       css = '.weather-map__table-cell:nth-child(2)')
-   maxTemp <-
-     rvest::html_nodes(pagina,
-                       css = '.weather-map__table-cell:nth-child(4)')
-   minTemp <-
-     rvest::html_nodes(pagina,
-                       css = '.weather-map__table-cell:nth-child(5)')
-   neerslag <-
-     rvest::html_nodes(pagina,
-                       css = '.weather-map__table-cell:nth-child(6)')
-   neerslagKans <-
-     rvest::html_nodes(pagina,
-                       css = '.weather-map__table-cell:nth-child(7)')
-   percZon <-
-     rvest::html_nodes(pagina,
-                       css = '.weather-map__table-cell:nth-child(8)')
-   wind <-
-     rvest::html_nodes(pagina,
-                       css = '.weather-map__table-cell:nth-child(9)')
+     # extraheer waarden in lists:
+     datum <-
+       rvest::html_nodes(pagina,
+                         css = '.weather-map__table-cell:nth-child(2)')
+     maxTemp <-
+       rvest::html_nodes(pagina,
+                         css = '.weather-map__table-cell:nth-child(4)')
+     minTemp <-
+       rvest::html_nodes(pagina,
+                         css = '.weather-map__table-cell:nth-child(5)')
+     neerslag <-
+       rvest::html_nodes(pagina,
+                         css = '.weather-map__table-cell:nth-child(6)')
+     neerslagKans <-
+       rvest::html_nodes(pagina,
+                         css = '.weather-map__table-cell:nth-child(7)')
+     percZon <-
+       rvest::html_nodes(pagina,
+                         css = '.weather-map__table-cell:nth-child(8)')
+     wind <-
+       rvest::html_nodes(pagina,
+                         css = '.weather-map__table-cell:nth-child(9)')
 
-   size <- length(datum)
-   voorspelling <-
-     data.frame(stationID = rep("260", size), # De Bilt
-                station = rep("De Bilt", size),
-                YYYYMMDD = rep("20000101", size),
-                date = as.Date("2000-01-01") + 1:size, # just dummy dates
-                maxTemp = double(size),
-                maxTempSD = double(size),
-                minTemp = double(size),
-                minTempSD = double(size),
-                gemTemp = double(size),
-                gemTempSD = double(size),
-                neerslag = double(size),
-                neerslagSD = double(size),
-                neerslagKans = double(size),
-                percZon = double(size),
-                windkracht = double(size),
-                stringsAsFactors = FALSE)
+     size <- length(datum)
+     voorspelling <-
+       data.frame(stationID = rep("260", size), # De Bilt
+                  station = rep("De Bilt", size),
+                  YYYYMMDD = rep("20000101", size),
+                  date = as.Date("2000-01-01") + 1:size, # just dummy dates
+                  maxTemp = double(size),
+                  maxTempSD = double(size),
+                  minTemp = double(size),
+                  minTempSD = double(size),
+                  gemTemp = double(size),
+                  gemTempSD = double(size),
+                  neerslag = double(size),
+                  neerslagSD = double(size),
+                  neerslagKans = double(size),
+                  percZon = double(size),
+                  windkracht = double(size),
+                  stringsAsFactors = FALSE)
 
-   # nu alles in een loopje:
-   for (i in 1:size) {
-      voorspelling$date[i] <- as.Date(rvest::html_text(datum[i]), format = "%d-%m-%Y")
-      voorspelling$YYYYMMDD[i] <- as.character(rvest::html_text(datum[i]), format = "%Y%m%d")
-      # maxTemp
-      voorspelling$maxTemp[i] <- mean(as.numeric(extraheer_numerieke_waarden(maxTemp[i])))
-      voorspelling$maxTempSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(maxTemp[i])))
-      # minTemp
-      voorspelling$minTemp[i] <- mean(as.numeric(extraheer_numerieke_waarden(minTemp[i])))
-      voorspelling$minTempSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(minTemp[i])))
-      # gemTemp
-      voorspelling$gemTemp[i] <- mean(c(voorspelling$minTemp[i], voorspelling$maxTemp[i]))
-      voorspelling$gemTempSD[i] <-
-        sqrt((voorspelling$minTempSD[i]*voorspelling$minTempSD[i] + voorspelling$maxTempSD[i]*voorspelling$maxTempSD[i]) / 2)
-      # neerslag
-      voorspelling$neerslag[i] <- mean(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
-      voorspelling$neerslagSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
-      # neerslagKans
-      voorspelling$neerslagKans[i] <- mean(as.numeric(extraheer_numerieke_waarden(neerslagKans[i])))
-      # percZon
-      voorspelling$percZon[i] <- mean(as.numeric(extraheer_numerieke_waarden(percZon[i])))
-      # wind
-      voorspelling$windkracht[i] <- mean(as.numeric(extraheer_numerieke_waarden(wind[i])))
-   }
+     # nu alles in een loopje:
+     for (i in 1:size) {
+        voorspelling$date[i] <- as.Date(rvest::html_text(datum[i]), format = "%d-%m-%Y")
+        voorspelling$YYYYMMDD[i] <- as.character(rvest::html_text(datum[i]), format = "%Y%m%d")
+        # maxTemp
+        voorspelling$maxTemp[i] <- mean(as.numeric(extraheer_numerieke_waarden(maxTemp[i])))
+        voorspelling$maxTempSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(maxTemp[i])))
+        # minTemp
+        voorspelling$minTemp[i] <- mean(as.numeric(extraheer_numerieke_waarden(minTemp[i])))
+        voorspelling$minTempSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(minTemp[i])))
+        # gemTemp
+        voorspelling$gemTemp[i] <- mean(c(voorspelling$minTemp[i], voorspelling$maxTemp[i]))
+        voorspelling$gemTempSD[i] <-
+          sqrt((voorspelling$minTempSD[i]*voorspelling$minTempSD[i] + voorspelling$maxTempSD[i]*voorspelling$maxTempSD[i]) / 2)
+        # neerslag
+        voorspelling$neerslag[i] <- mean(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
+        voorspelling$neerslagSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
+        # neerslagKans
+        voorspelling$neerslagKans[i] <- mean(as.numeric(extraheer_numerieke_waarden(neerslagKans[i])))
+        # percZon
+        voorspelling$percZon[i] <- mean(as.numeric(extraheer_numerieke_waarden(percZon[i])))
+        # wind
+        voorspelling$windkracht[i] <- mean(as.numeric(extraheer_numerieke_waarden(wind[i])))
+     }
 
-   # kolom-namen omzetten van leesbaar, naar  codes (kan weer worden teruggezet met de functie 'rename_columns()')
-   colnames(voorspelling) <-
-     c("STN","station","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
-       "RH","SD_neerslag","neerslagKans","SP","windkracht")
+     # kolom-namen omzetten van leesbaar, naar  codes (kan weer worden teruggezet met de functie 'rename_columns()')
+     colnames(voorspelling) <-
+       c("STN","station","YYYYMMDD","date","TX","SD_maxTemp","TN","SD_minTemp","TG","SD_gemTemp",
+         "RH","SD_neerslag","neerslagKans","SP","windkracht")
 
-   # windkracht omzetten naar m/s:
-   wind <- converteer_beaufort_schaal(voorspelling$windkracht)
-   voorspelling <- cbind(voorspelling, wind)
+     # windkracht omzetten naar m/s:
+     wind <- converteer_beaufort_schaal(voorspelling$windkracht)
+     voorspelling <- cbind(voorspelling, wind)
 
-   # dezelfde hulp-kolommen toevoegen als in de andere functies die KNMI-data ophalen:
-   voorspelling$doy <- yday(voorspelling$date)
-   voorspelling$year <- year(voorspelling$date)
-   voorspelling$month <- month(voorspelling$date)
-   voorspelling$week <- week(voorspelling$date)
-   voorspelling$day <- wday(voorspelling$date)
+     # dezelfde hulp-kolommen toevoegen als in de andere functies die KNMI-data ophalen:
+     voorspelling$doy <- lubridate::yday(voorspelling$date)
+     voorspelling$year <- lubridate::year(voorspelling$date)
+     voorspelling$month <- lubridate::month(voorspelling$date)
+     voorspelling$week <- lubridate::week(voorspelling$date)
+     voorspelling$day <- lubridate::wday(voorspelling$date)
 
-   return(voorspelling)
-}
+     return(voorspelling)
+  }
 
 #' @title Get fourteen-day weather forecast (Weerplaza).
 #'
@@ -143,7 +146,8 @@ get_6day_weather_forecast <- function() {
 #' @return a data frame.
 #' @format The returned data frame contains the following columns:
 #' \itemize{
-#'   \item STN      ID of measurementstation;
+#'   \item STN      ID of the measurement station;
+#'   \item station  Name of the measurement station;
 #'   \item YYYYMMDD Datum (YYYY=jaar MM=maand DD=dag) in karakter-formaat;
 #'   \item date     date in date-format;
 #'   \item TN	Minimum temperatuur (in 0.1 graden Celsius);
@@ -164,6 +168,7 @@ get_6day_weather_forecast <- function() {
 #' @source \url{https://www.weerplaza.nl/nederland/}
 #' @keywords weather forecast
 #' @export
+#'
 get_14day_weather_forecast <-
   function(station = 260) {
 
@@ -285,11 +290,11 @@ get_14day_weather_forecast <-
     voorspelling <- cbind(voorspelling, wind)
 
     # dezelfde hulp-kolommen toevoegen als in de andere functies die KNMI-data ophalen:
-    voorspelling$doy <- yday(voorspelling$date)
-    voorspelling$year <- year(voorspelling$date)
-    voorspelling$month <- month(voorspelling$date)
-    voorspelling$week <- week(voorspelling$date)
-    voorspelling$day <- wday(voorspelling$date)
+    voorspelling$doy <- lubridate::yday(voorspelling$date)
+    voorspelling$year <- lubridate::year(voorspelling$date)
+    voorspelling$month <- lubridate::month(voorspelling$date)
+    voorspelling$week <- lubridate::week(voorspelling$date)
+    voorspelling$day <- lubridate::wday(voorspelling$date)
 
     return(voorspelling)
 }
