@@ -1,7 +1,7 @@
-#' @title get KNMI climate day data.
+#' @title get daily KNMI climate data.
 #'
 #' @description
-#' \code{get_climate_data_api} retrieves KNMI data through the KNMI-API.
+#' \code{get_daily_data} retrieves KNMI data through the KNMI-API.
 #'
 #' @details
 #' This function retrieves raw climate data collected by the official KNMI measurement stations for a specific station
@@ -19,8 +19,8 @@
 #'       the API does not expose these.
 #'
 #' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
-#' @param from startdate for the time-window. Defaults to the start of the current year. Note: a string of characters in the format 'yyyymmdd'.
-#' @param to enddate for the time-window. Defaults to yesterday. Note: a string of characters in the format 'yyyymmdd'.
+#' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd', 'yyyymm' or 'yyyy'. Missing digits are replaced with the first day of the month and/or the first month of the year.
+#' @param to enddate for the time-window. Defaults to yesterday (most recent data provided by the KNMI). A string of characters in the format 'yyyymmdd', 'yyyymm' or 'yyyy'. Missing digits are replaced with the last day of the month and/or the last month of the year.
 #' @return a data frame.
 #' @format The returned data frame contains the following columns:
 #' \itemize{
@@ -68,16 +68,112 @@
 #' }
 #' @keywords historic weather data
 #' @export
-get_climate_data_api <- function(stationID = "ALL",
-                                 from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
-                                 to = format(Sys.Date()-1, format = "%Y%m%d")) {
+get_daily_data <-
+  function(stationID = "ALL",
+           from,
+           to) {
 
-   baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
-   params <- "ALL"
-   link <- paste(baseURL, "?start=", from, "&end=", to, "&stns=", stationID,"&", params, sep = "")
-   data <- data.frame(read.csv(link, header = FALSE, sep = ",", comment.char = "#"))
+    # try to parse date-parameters
+    if (missing(from))
+      from <-
+        lubridate::today() %>%
+        lubridate::year() %>%
+        paste0(., "0101")
+    if (missing(to))
+      to <-
+        (lubridate::today() - 1) %>% # yesterday
+        as.character() %>%
+        stringr::str_remove_all(pattern = "-")
 
-   colnames(data) <- c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N","T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","EV24","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH","NG","UG","UX","UXH","UN","UNH")
+    if (!is.character(from) | !is.character(to) | stringr::str_length(from) %% 2 == 1 | stringr::str_length(to) %% 2 == 1) {
+      stop("The values for 'from' and 'to' must be a string with a value that describes the date in the format 'YYYY', 'YYYYMM' or 'YYYYMMDD'.")
+    } else {
+      if (stringr::str_length(from) == 6) {
+        from_date <- paste0(from, "01")
+      } else if (stringr::str_length(from) == 4) {
+        from_date <- paste0(from, "0101")
+      } else {
+        from_date <- from
+      }
 
-   return(data)
-}
+      if (stringr::str_length(to) == 6)
+        to <- paste0(to, "01")
+      else if (stringr::str_length(to) == 4)
+        to <- paste0(to, "1231")
+
+      to_date <-
+        lubridate::ymd(to) %>%
+        lubridate::ceiling_date(unit = "month") - 1
+      to_date <-
+        to_date %>%
+        as.character() %>%
+        stringr::str_remove_all(pattern = "-")
+    }
+
+    baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
+    params <- "ALL"
+    URL <- paste0(baseURL, "?start=", from_date, "&end=", to_date, "&stns=", stationID,"&", params)
+
+    data_daily <-
+      readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
+      as_tibble()
+
+    colnames(data_daily) <-
+      c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N",
+        "T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","EV24","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH","NG",
+        "UG","UX","UXH","UN","UNH")
+
+    return(data_daily)
+  }
+
+#' @title get daily KNMI climate data.
+#'
+#' @description
+#' \code{get_climate_day_data_api} retrieves KNMI data through the KNMI-API.
+#'
+#' @details
+#' Depricated function. Please use '\code{get_daily_data}' instead.
+#'
+#' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
+#' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd'.
+#' @param to enddate for the time-window. Defaults to yesterday. A string of characters in the format 'yyyymmdd'.
+#' @return a data frame.
+#' @keywords historic weather data
+#' @export
+get_climate_day_data_api <-
+  function(stationID = "ALL",
+           from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
+           to = format(Sys.Date()-1, format = "%Y%m%d")) {
+
+    print("Depricated function. Please use 'get_daily_data' instead.")
+
+    data_daily <- get_daily_data(stationID, from, to)
+
+    return(data_daily)
+  }
+
+#' @title get daily KNMI climate data.
+#'
+#' @description
+#' \code{get_climate_day_data_api} retrieves KNMI data through the KNMI-API.
+#'
+#' @details
+#' Depricated function. Will be removed in the next release. Please use '\code{get_daily_data}' instead.
+#'
+#' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
+#' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd'.
+#' @param to enddate for the time-window. Defaults to yesterday. A string of characters in the format 'yyyymmdd'.
+#' @return a data frame.
+#' @keywords historic weather data
+#' @export
+get_climate_data_api <-
+  function(stationID = "ALL",
+           from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
+           to = format(Sys.Date()-1, format = "%Y%m%d")) {
+
+    print("Depricated function. Please use 'get_daily_data' instead.")
+
+    data_daily <- get_daily_data(stationID, from, to)
+
+    return(data_daily)
+  }
