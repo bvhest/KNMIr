@@ -15,7 +15,6 @@
 #' @param currentYear the year for which the daily values must be shown. When not provided, the most current year from
 #' the dataframe is taken.
 #' @param title a title for the plot. When not provided, a default title is generated.
-#' @import ggplot2
 #' @export
 #'
 #
@@ -105,7 +104,7 @@ plot_climate_diagram <- function (data,
 
    # label based on selected column:
    if (column == "gemTemp") {
-      ylabel <- "Temperature (°C)"
+      ylabel <- "Temperature (C)"
    } else if (column == "dagTotaalNeerslag") {
       ylabel <- "Precipitation (mm)"
    } else if (column == "gemWind") {
