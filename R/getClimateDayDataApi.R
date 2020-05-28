@@ -109,6 +109,8 @@ get_daily_data <-
         as.character() %>%
         stringr::str_remove_all(pattern = "-")
     }
+    if (as.numeric(to_date < as.numeric(from_date)))
+      stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
 
     baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
     params <- "ALL"
