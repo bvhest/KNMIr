@@ -17,32 +17,35 @@
 #' @return a tibble.
 #' @format The returned data frame contains the following columns:
 #' \itemize{
-# '   \item  HH       = tijd (HH=uur, UT.12 UT=13 MET, 14 MEZT. Uurvak 05 loopt van 04.00 UT tot 5.00 UT;
-# '   \item  DD       = Windrichting (in graden) gemiddeld over de laatste 10 minuten van het afgelopen uur (360=noord, 90=oost, 180=zuid, 270=west, 0=windstil 990=veranderlijk. Zie http://www.knmi.nl/kennis-en-datacentrum/achtergrond/klimatologische-brochures-en-boeken;
-# '   \item  FH       = Uurgemiddelde windsnelheid (in 0.1 m/s). Zie http://www.knmi.nl/kennis-en-datacentrum/achtergrond/klimatologische-brochures-en-boeken;
-# '   \item  FF       = Windsnelheid (in 0.1 m/s) gemiddeld over de laatste 10 minuten van het afgelopen uur;
-# '   \item  FX       = Hoogste windstoot (in 0.1 m/s) over het afgelopen uurvak;
-# '   \item  T        = Temperatuur (in 0.1 graden Celsius) op 1.50 m hoogte tijdens de waarneming;
-# '   \item  T10N     = Minimumtemperatuur (in 0.1 graden Celsius) op 10 cm hoogte in de afgelopen 6 uur;
-# '   \item  TD       = Dauwpuntstemperatuur (in 0.1 graden Celsius) op 1.50 m hoogte tijdens de waarneming;
-# '   \item  SQ       = Duur van de zonneschijn (in 0.1 uren) per uurvak, berekend uit globale straling  (-1 for <0.05 uur);
-# '   \item  Q        = Globale straling (in J/cm2) per uurvak;
-# '   \item  DR       = Duur van de neerslag (in 0.1 uur) per uurvak;
-# '   \item  RH       = Uursom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm);
-# '   \item  P        = Luchtdruk (in 0.1 hPa) herleid naar zeeniveau, tijdens de waarneming;
-# '   \item  VV       = Horizontaal zicht tijdens de waarneming (0=minder dan 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km, ..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=meer dan 70km);
-# '   \item  N        = Bewolking (bedekkingsgraad van de bovenlucht in achtsten), tijdens de waarneming (9=bovenlucht onzichtbaar);
-# '   \item  U        = Relatieve vochtigheid (in procenten) op 1.50 m hoogte tijdens de waarneming;
-# '   \item  WW       = Weercode (00-99), visueel(WW) of automatisch(WaWa) waargenomen, voor het actuele weer of het weer in het afgelopen uur. Zie http://bibliotheek.knmi.nl/scholierenpdf/weercodes_Nederland;
-# '   \item  IX       = Weercode indicator voor de wijze van waarnemen op een bemand of automatisch station (1=bemand gebruikmakend van code uit visuele waarnemingen, 2,3=bemand en weggelaten (geen belangrijk weersverschijnsel, geen gegevens), 4=automatisch en opgenomen (gebruikmakend van code uit visuele waarnemingen), 5,6=automatisch en weggelaten (geen belangrijk weersverschijnsel, geen gegevens), 7=automatisch gebruikmakend van code uit automatische waarnemingen);
-# '   \item  M        = Mist 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
-# '   \item  R        = Regen 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
-# '   \item  S        = Sneeuw 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
-# '   \item  O        = Onweer 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
-# '   \item  Y        = IJsvorming 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
-#' }
+#'   \item STN      = ID of measurementstation;
+#'   \item YYYYMMDD = Datum (YYYY=jaar MM=maand DD=dag);
+#'   \item  HH       = tijd (HH=uur, UT.12 UT=13 MET, 14 MEZT. Uurvak 05 loopt van 04.00 UT tot 5.00 UT;
+#'   \item  DD       = Windrichting (in graden) gemiddeld over de laatste 10 minuten van het afgelopen uur (360=noord, 90=oost, 180=zuid, 270=west, 0=windstil 990=veranderlijk. Zie http://www.knmi.nl/kennis-en-datacentrum/achtergrond/klimatologische-brochures-en-boeken;
+#'   \item  FH       = Uurgemiddelde windsnelheid (in 0.1 m/s). Zie http://www.knmi.nl/kennis-en-datacentrum/achtergrond/klimatologische-brochures-en-boeken;
+#'   \item  FF       = Windsnelheid (in 0.1 m/s) gemiddeld over de laatste 10 minuten van het afgelopen uur;
+#'   \item  FX       = Hoogste windstoot (in 0.1 m/s) over het afgelopen uurvak;
+#'   \item  T        = Temperatuur (in 0.1 graden Celsius) op 1.50 m hoogte tijdens de waarneming;
+#'   \item  T10N     = Minimumtemperatuur (in 0.1 graden Celsius) op 10 cm hoogte in de afgelopen 6 uur;
+#'   \item  TD       = Dauwpuntstemperatuur (in 0.1 graden Celsius) op 1.50 m hoogte tijdens de waarneming;
+#'   \item  SQ       = Duur van de zonneschijn (in 0.1 uren) per uurvak, berekend uit globale straling  (-1 for <0.05 uur);
+#'   \item  Q        = Globale straling (in J/cm2) per uurvak;
+#'   \item  DR       = Duur van de neerslag (in 0.1 uur) per uurvak;
+#'   \item  RH       = Uursom van de neerslag (in 0.1 mm) (-1 voor <0.05 mm);
+#'   \item  P        = Luchtdruk (in 0.1 hPa) herleid naar zeeniveau, tijdens de waarneming;
+#'   \item  VV       = Horizontaal zicht tijdens de waarneming (0=minder dan 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km, ..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=meer dan 70km);
+#'   \item  N        = Bewolking (bedekkingsgraad van de bovenlucht in achtsten), tijdens de waarneming (9=bovenlucht onzichtbaar);
+#'   \item  U        = Relatieve vochtigheid (in procenten) op 1.50 m hoogte tijdens de waarneming;
+#'   \item  WW       = Weercode (00-99), visueel(WW) of automatisch(WaWa) waargenomen, voor het actuele weer of het weer in het afgelopen uur. Zie http://bibliotheek.knmi.nl/scholierenpdf/weercodes_Nederland;
+#'   \item  IX       = Weercode indicator voor de wijze van waarnemen op een bemand of automatisch station (1=bemand gebruikmakend van code uit visuele waarnemingen, 2,3=bemand en weggelaten (geen belangrijk weersverschijnsel, geen gegevens), 4=automatisch en opgenomen (gebruikmakend van code uit visuele waarnemingen), 5,6=automatisch en weggelaten (geen belangrijk weersverschijnsel, geen gegevens), 7=automatisch gebruikmakend van code uit automatische waarnemingen);
+#'   \item  M        = Mist 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
+#'   \item  R        = Regen 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
+#'   \item  S        = Sneeuw 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
+#'   \item  O        = Onweer 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
+#'   \item  Y        = IJsvorming 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
+# }
 #' @keywords historic weather data by hour
 #' @export
+#'
 get_hourly_data <-
   function(stationID = "260",
            from,
@@ -54,13 +57,13 @@ get_hourly_data <-
         (lubridate::today() - 7) %>% # one week ago
         as.character() %>%
         stringr::str_remove_all(pattern = "-") %>%
-        paste0(., "01")
+        stringr::str_glue(., "01")
     if (missing(to))
       to <-
         (lubridate::today() - 1) %>% # yesterday
         as.character() %>%
         stringr::str_remove_all(pattern = "-") %>%
-        paste0(., "24")
+        stringr::str_glue(., "24")
 
     if (!is.character(from) | !is.character(to) | stringr::str_length(from) %% 2 == 1 | stringr::str_length(to) %% 2 == 1) {
       stop("The values for 'from' and 'to' must be a string with a value that describes the date in the format 'YYYY', 'YYYYMM', 'YYYYMMDD' or 'YYYYMMDDHH'.")
@@ -103,7 +106,7 @@ get_hourly_data <-
 
    hourly_data <-
      readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
-     as_tibble()
+     dplyr::as_tibble()
 
    column_names <-
       c("STN", "YYYYMMDD", "HH", "DD", "FH", "FF", "FX", "T", "T10N", "TD", "SQ", "Q", "DR", "RH", "P", "VV", "N", "U", "WW", "IX", "M", "R", "S", "O", "Y")
@@ -119,7 +122,7 @@ get_hourly_data <-
 #' @title get KNMI climate hourly data.
 #'
 #' @description
-#' \code{get_climate_data_api} retrieves KNMI hourly data through the KNMI-API.
+#' \code{get_climate_hour_data_api} retrieves KNMI hourly data through the KNMI-API.
 #'
 #' @details
 #' Depricated function. Will be removed in the next release. Please use '\code{get_hourly_data}' instead.
@@ -130,6 +133,7 @@ get_hourly_data <-
 #' @return a tibble.
 #' @keywords historic weather data by hour
 #' @export
+#'
 get_climate_hour_data_api <-
   function(stationID = "ALL",
            from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
