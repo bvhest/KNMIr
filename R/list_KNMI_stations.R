@@ -29,13 +29,6 @@ list_stations <-
       dplyr::filter(if(is_active) active else TRUE) %>%
       as_tibble()
 
-    # if (active) {
-    #   selected_stations <- stations[is.na(stations$einddatum),]
-    # } else {
-    #   selected_stations <- stations
-    # }
-    # selected_stations$active <- is.na(selected_stations$einddatum)
-
     if (identifying_columns)
       selected_stations <-
         selected_stations %>%
