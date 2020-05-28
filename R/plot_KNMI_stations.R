@@ -12,7 +12,6 @@
 #'   TRUE.
 #' @return data-frame with the id, name, url to station information and the
 #'   lat/lon of the nearest KNMI-station.
-#' @import ggplot2
 #' @export
 #'
 plot_stations <-
