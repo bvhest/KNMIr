@@ -6,8 +6,8 @@
 #' @details
 #' This function retrieves raw climate data collected by the official KNMI measurement stations for a specific station
 #' and/or date-range. It uses the, somewhat slower, KNMI-API to collect the data.
-#' The function \code{\link{get_climate_data_zip}} in this package is optimized to collect data for larger date-ranges (e.g.
-#' for > 10 years), but is less flexible with combinations of all or specific stations and date ranges.
+#' The function \code{\link{get_daily_data_from_prepared_zip}} in this package is optimized to collect data for larger
+#' date-ranges (e.g. for > 10 years), but is less flexible with combinations of all or specific stations and date ranges.
 #'
 #' You can specify a specific station or get data from all the stations at once (the default).
 #' When the from and to date parameters are not proviced, all measurements for the current year are returned. Otherwise
