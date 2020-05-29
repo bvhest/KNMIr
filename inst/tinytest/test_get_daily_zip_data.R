@@ -14,7 +14,7 @@ start_date <-
   paste0(., "0101") %>%
   as.integer()
 end_date <-
-  (lubridate::today()-2) %>% # sea-based data lags the land-based data: adjust end date.
+  (lubridate::today()-1) %>% # sea-based data lags the land-based data: adjust end date.
   as.character() %>%
   stringr::str_remove_all(pattern = "-") %>%
   as.integer()
@@ -31,6 +31,11 @@ expect_equal(ncol(dd), 41)
 # check non-default behavior: all sea-based stations, this year.
 # **********************************************************************************************************************
 station_count <- 13L
+end_date <-
+  (lubridate::today()-2) %>% # sea-based data lags the land-based data: adjust end date.
+  as.character() %>%
+  stringr::str_remove_all(pattern = "-") %>%
+  as.integer()
 
 dd <- get_daily_data_from_prepared_zip(station_type = "sea")
 
