@@ -161,7 +161,7 @@ get_daily_data_from_prepared_zip <-
 #' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
 #' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd'.
 #' @param to enddate for the time-window. Defaults to yesterday. A string of characters in the format 'yyyymmdd'.
-#' @param station_type boolean indicating that only the data for the land-based stations is returned. Defaults to "TRUE".
+#' @param return_only_land boolean indicating that only the data for the land-based stations is returned. Defaults to "TRUE".
 #' @return a tibble.
 #' @format The returned data frame contains the following columns:
 #' @keywords historic weather data
