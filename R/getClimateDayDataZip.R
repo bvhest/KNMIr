@@ -1,7 +1,7 @@
-#' @title get KNMI climate day data from zip-files.
+#' @title get KNMI climate daily data from zip-files.
 #'
 #' @description
-#' \code{get_climate_data_zip} retrieves KNMI data by downloading prepared KNMI zip-files.
+#' \code{get_daily_data_from_prepared_zip} retrieves KNMI data by downloading prepared KNMI zip-files.
 #'
 #' @details
 #' This function retrieves raw climate data collected by the official KNMI weather stations. It is optimised for
@@ -16,13 +16,13 @@
 #' The original KNMI API is described at the web-page \href{http://www.knmi.nl/nederland-nu/klimatologie/daggegevens}{Daggegevens van het weer in Nederland}.
 #'
 #' Note: this function also works for the measurement stations in the North Sea. When the parameter station = "ALL"
-#'       and return_only_land = FALSE, the data for all stations on land and sea is returned. With return_only_land = TRUE
+#'       and station_type = FALSE, the data for all stations on land and sea is returned. With station_type = TRUE
 #'       (the default) only the data for the land-based stations is returned.
 #'
 #' @param stationID ID for the KNMI station. The available stations can be retrieved with the function 'list_stations()'. Defaults to "ALL". . Note: a string of characters in the format 'iii'.
-#' @param from startdate for the time-window. Defaults to the start of the current year. If the returned data is from a later date, no prior data is available for the selected station. Note: a string of characters in the format 'yyyymmdd'.
-#' @param to enddate for the time-window. Defaults to yesterday. If the returned data is from an earlier date, no recent data is available for the selected station. Note: a string of characters in the format 'yyyymmdd'.
-#' @param return_only_land boolean indicating that only the data for the land-based stations is returned. Defaults to "TRUE".
+#' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd', 'yyyymm' or 'yyyy'. Missing digits are replaced with the first day of the month and/or the first month of the year.
+#' @param to enddate for the time-window. Defaults to yesterday (most recent data provided by the KNMI). A string of characters in the format 'yyyymmdd', 'yyyymm' or 'yyyy'. Missing digits are replaced with the last day of the month and/or the last month of the year.
+#' @param station_type string indicating station type. Possible values 'land', 'sea', 'both', is returned. Defaults to 'land'.
 #' @return a data frame.
 #' @format The returned data frame contains the following columns:
 #' \itemize{
@@ -70,133 +70,241 @@
 #' }
 #' @keywords historic weather data
 #' @export
+#'
+get_daily_data_from_prepared_zip <-
+  function(stationID = "ALL",
+           from,
+           to,
+           station_type = "land") {
+
+    # validate-parameters
+    # ToDo: check if station code is valid, else issue error message.
+    if (!(station_type %in% c("land", "sea", "both")))
+      stop("The station_type must be one of 'land', 'sea' or 'both'.")
+
+    # try to parse date-parameters
+    if (missing(from))
+      from <-
+        lubridate::today() %>%
+        lubridate::year() %>%
+        stringr::str_glue(., "0101")
+    if (missing(to))
+      to <-
+        (lubridate::today() - 1) %>% # yesterday
+        as.character() %>%
+        stringr::str_remove_all(pattern = "-")
+
+    if (!is.character(from) | !is.character(to) | stringr::str_length(from) %% 2 == 1 | stringr::str_length(to) %% 2 == 1) {
+      stop("The values for 'from' and 'to' must be a string with a value that describes the date in the format 'YYYY', 'YYYYMM' or 'YYYYMMDD'.")
+    } else {
+      if (stringr::str_length(from) == 6) {
+        from_date <- paste0(from, "01")
+      } else if (stringr::str_length(from) == 4) {
+        from_date <- paste0(from, "0101")
+      } else {
+        from_date <- from
+      }
+
+      if (stringr::str_length(to) == 8) {
+        to_date <- to
+      } else {
+        if (stringr::str_length(to) == 6)
+          to <- paste0(to, "01")
+        else if (stringr::str_length(to) == 4)
+          to <- paste0(to, "1231")
+
+        to_date <-
+          lubridate::ymd(to) %>%
+          lubridate::ceiling_date(unit = "month") - 1
+        to_date <-
+          to_date %>%
+          as.character() %>%
+          stringr::str_remove_all(pattern = "-")
+      }
+    }
+    if (as.numeric(to_date) < as.numeric(from_date))
+      stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
+
+    if(station_type == "land") {
+      daily_data <-
+        get_land_data_zip(stationID, from_date, to_date)
+    } else if (station_type == "sea") {
+      daily_data <-
+        get_sea_data_zip(stationID, from_date, to_date)
+    } else {
+      land_data <-
+        get_land_data_zip(stationID, from_date, to_date)
+      sea_data <-
+        get_sea_data_zip(stationID, from_date, to_date)
+
+      # combine the land (possible empty) and sea-data while taking into account that the sea-based stations
+      # provide less variables than the land-based stations
+      daily_data <-
+        land_data %>%
+        dplyr::select(colnames(sea_data)) %>%
+        dplyr::bind_rows(sea_data)
+
+    }
+
+    return(daily_data)
+  }
+
+
+
+#' @title get KNMI climate daily data from zip-files.
+#'
+#' @description
+#' \code{get_climate_data_zip} retrieves KNMI data by downloading the prepared KNMI zip-files.
+#'
+#'#' Depricated function. Please use '\code{get_daily_data_from_prepared_zip}' instead.
+#'
+#' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
+#' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd'.
+#' @param to enddate for the time-window. Defaults to yesterday. A string of characters in the format 'yyyymmdd'.
+#' @param station_type boolean indicating that only the data for the land-based stations is returned. Defaults to "TRUE".
+#' @return a tibble.
+#' @format The returned data frame contains the following columns:
+#' @keywords historic weather data
+#' @export
+#'
 get_climate_data_zip <- function(stationID = "ALL",
                                  from = paste(format(Sys.Date(), format="%Y"), "0101", sep=""),
                                  to = format(Sys.Date()-1, format="%Y%m%d"),
                                  return_only_land = TRUE) {
 
-   thisYear <- format(Sys.Date(), format="%Y")
-   fromYear <- substr(from, 1, 4)
+  print("Depricated function. Please use 'get_daily_data_from_prepared_zip' instead.")
 
-   if(station=='ALL' & fromYear < thisYear) {
-      # no other choice than to use the slower script-based download:
-      data <- get_climate_data_api(station, from, to)
+  if (return_only_land)
+    station_type = "land"
+  else
+    station_type = "both"
 
-   } else {
+  data_daily <- get_daily_data_from_prepared_zip(stationID, from, to, station_type)
+
+  return(data_daily)
+}
+
+
+
+# **********************************************************************************************************************
+#
+# hulp-functies
+#
+# **********************************************************************************************************************
+
+# ophalen (prepared zip-file) data for the sea-based KNMI stations
+get_land_data_zip <-
+  function(stationID,
+           from,
+           to) {
+
+    # check if the zip-API can be used:
+    thisYear <-
+      format(Sys.Date(), format="%Y") %>%
+      as.numeric()
+    fromYear <-
+      substr(from, 1, 4) %>%
+      as.numeric()
+
+    if (stationID == 'ALL' & fromYear < thisYear) {
+      # no other choice than to use the slower script-based API:
+      print("INFO: all stations are choosen and the start-year is before the current year: reverting to the slower script-based API.")
+
+      daily_data <-
+        get_daily_data(stationID, from, to)
+
+    } else {
       # retrieve prepared download-files from the KNMI website
-      if(station == 'ALL' & fromYear == thisYear) {
-        link <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/jaar.zip"
+      if(stationID == 'ALL' & fromYear == thisYear) {
+        URL <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/jaar.zip"
         file <- "jaar.txt"
-      }
-      else {
-        # ToDo: check if stion code is valid, else issue error message.
 
-        # retrieve all available data for this station:
-        link <- paste0("http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_",station,".zip")
-        file <- paste0("etmgeg_",station,".txt")
+      } else {
+        # retrieve all available data for this specific station:
+        URL <- paste0("http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_",stationID,".zip")
+        file <- paste0("etmgeg_",stationID,".txt")
+
       }
+
       # download a zip file containing broadband data, save it to the working directory
-      download.file(link,
+      download.file(URL,
+                    destfile = "./temp.zip")
+      # unzip the file
+      unzip(zipfile = "./temp.zip",
+            exdir = "./temp")
+
+      daily_data <-
+        readr::read_csv(file = paste0("./temp/", file),
+                        col_names = TRUE,
+                        col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+                        skip = 47) %>%
+        dplyr::as_tibble() %>%
+        # correct the first column name
+        dplyr::rename(STN = `# STN`) %>%
+        # return subset based on provided start-/end-date parameters
+        dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to))
+
+    }
+
+    return(daily_data)
+
+  }
+
+# ophalen (prepared zip-file) data for the sea-based KNMI stations
+get_sea_data_zip <-
+  function(stationID = "ALL",
+           from,
+           to) {
+
+    base_url <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_"
+
+    if (stationID == "ALL")
+      sea_based_stations <- c(201,
+                              203,
+                              204,
+                              205,
+                              206,
+                              207,
+                              208,
+                              211,
+                              212,
+                              239,
+                              252,
+                              320,
+                              321)
+    else
+      sea_based_stations <- stationID
+
+    daily_data <- NULL
+    for (i in 1:length(sea_based_stations)) {
+
+      URL <- paste0(base_url, sea_based_stations[i], ".zip")
+
+      # download a zip file containing broadband data, save it to the working directory
+      download.file(URL,
                     destfile="./temp.zip")
+
       # unzip the file
       unzip(zipfile="./temp.zip",
             exdir = "./temp")
-      # read the data into R, with "|" seperating values
-      data <- read.csv(file = paste0("./temp/", file),
-                       header = FALSE,
-                       sep = ",",
-                       skip = 47,
-                       strip.white = TRUE,
-                       comment.char = "#",
-                       na.strings = "-",
-                       as.is = TRUE)
-
-      colnames(data) <- c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH",
-                          "TX","TXH","T10N","T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","PG","PX","PXH","PN","PNH",
-                          "VVN","VVNH","VVX","VVXH","NG","UG","UX","UXH","UN","UNH","EV24")
-
-      # return subset based on provided parameters.
-      data <- data[data$YYYYMMDD >= from & data$YYYYMMDD <= to,]
-   }
-
-   if (!(return_only_land)) {
-      sea_data <- get_sea_data_zip(station, from, to)
-
-      if (station == "ALL") {
-         # if station = "ALL", then combine the data while taking into account that the sea-based stations provide
-         # less variables than the land-based stations
-         data <- rbind(data[,colnames(sea_data)],
-                       sea_data)
-
-      } else {
-         # only return the data from the specified sea-based station
-         data <- sea_data
-      }
-   }
-
-   return(data)
-}
-
-
-get_sea_data_zip <- function(station = "ALL",
-                             from = paste(format(Sys.Date(), format="%Y"), "0101", sep=""),
-                             to = format(Sys.Date()-1, format="%Y%m%d")) {
-
-  base_url <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_"
-  sea_based_stations <- c(201,
-                          203,
-                          204,
-                          205,
-                          206,
-                          207,
-                          208,
-                          211,
-                          212,
-                          239,
-                          252,
-                          320,
-                          321)
-
-  if (station != "ALL")
-     sea_based_stations <- station
-
-  i <- 0
-  for (s in sea_based_stations) {
-     i <- i + 1
-
-     link <- paste0(base_url, s, ".zip")
-     download.file(link,
-                   destfile="./temp.zip")
-
-     # unzip the file
-     unzip(zipfile="./temp.zip",
-           exdir = "./temp")
 
           # read the data into R, with "|" seperating values
-     file <- paste0("etmgeg_",s,".txt") # etmgeg_201.txt
-     data <- read.csv(file = paste0("./temp/", file),
-                      header = FALSE,
-                      sep = ",",
-                      skip = 47,
-                      strip.white = TRUE,
-                      comment.char = "#",
-                      na.strings = "-",
-                      as.is = TRUE)
-     #  gegevens van temperatuur, zon, bewolking en zicht, luchtdruk, wind en neerslag per station gecombineerd.
-     colnames(data) <- c("STN", "YYYYMMDD", "DDVEC", "FHVEC", "FG", "FHX", "FHXH", "FHN", "FHNH", "FXX", "FXXH", "TG",
-                         "TN", "TNH", "TX", "TXH", "PG", "PX","PXH", "PN", "PNH", "VVN", "VVNH", "VVX", "VVXH", "NG",
-                         "UG", "UX", "UXH",  "UN", "UNH")
+      file <- paste0("etmgeg_",sea_based_stations[i],".txt") # example: etmgeg_201.txt
 
-     if (i == 1) {
-        all_stations <- data
-     } else {
-        all_stations <- rbind(all_stations, data)
-     }
+      daily_data <-
+        readr::read_csv(file = paste0("./temp/", file),
+                        col_names = TRUE,
+                        col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+                        skip = 35) %>%
+        dplyr::as_tibble() %>%
+        # correct the first column name
+        dplyr::rename(STN = `# STN`) %>%
+        # return subset based on provided start-/end-date parameters
+        dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to)) %>%
+        dplyr::bind_rows(daily_data)
+
+    }
+
+    return(daily_data)
+
   }
-
-  # return subset based on provided parameters.
-  all_stations <- all_stations[all_stations$YYYYMMDD >= from & all_stations$YYYYMMDD <= to, 1:31]
-
-  return(all_stations)
-
-}
