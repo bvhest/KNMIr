@@ -96,18 +96,22 @@ get_daily_data <-
         from_date <- from
       }
 
-      if (stringr::str_length(to) == 6)
-        to <- paste0(to, "01")
-      else if (stringr::str_length(to) == 4)
-        to <- paste0(to, "1231")
+      if (stringr::str_length(to) == 8) {
+        to_date <- to
+      } else {
+        if (stringr::str_length(to) == 6)
+          to <- paste0(to, "01")
+        else if (stringr::str_length(to) == 4)
+          to <- paste0(to, "1231")
 
-      to_date <-
-        lubridate::ymd(to) %>%
-        lubridate::ceiling_date(unit = "month") - 1
-      to_date <-
-        to_date %>%
-        as.character() %>%
-        stringr::str_remove_all(pattern = "-")
+        to_date <-
+          lubridate::ymd(to) %>%
+          lubridate::ceiling_date(unit = "month") - 1
+        to_date <-
+          to_date %>%
+          as.character() %>%
+          stringr::str_remove_all(pattern = "-")
+      }
     }
     if (as.numeric(to_date) < as.numeric(from_date))
       stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
