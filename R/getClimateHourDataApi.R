@@ -96,7 +96,7 @@ get_hourly_data <-
             paste0(., "24")
         }
     }
-    if (as.numeric(to_date < as.numeric(from_date)))
+    if (as.numeric(to_date) < as.numeric(from_date))
       stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
 
 
