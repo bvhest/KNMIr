@@ -63,9 +63,22 @@ setNames <-
            col.to,
            allow.absent.cols = TRUE) {
 
+    # https://stackoverflow.com/questions/44452108/rename-multiple-columns-given-character-vectors-of-column-names-and-replacement
+    # BUT DOES NOT WORK for me...
     # r <-
     #   x %>%
     #   dplyr::rename_at(vars(all_of(col.from)), ~col.to)
+    # r <-
+    #   x %>% rename_at(vars(col.from), function(x) col.to)
+
+#     cols <- setNames(col.from, col.to)
+#     x <-
+#       df %>%
+#       # https://stackoverflow.com/questions/43487773/how-to-rename-selected-columns-using-dplyr-with-new-column-names-as-strings
+# #      dplyr::rename_(.dots = cols)
+#       # https://stackoverflow.com/questions/20987295/rename-multiple-columns-by-names
+#       dplyr::rename_at(vars(oldnames), ~ newnames)
+
 
     if (!allow.absent.cols) {
       r <- data.table::setnames(x, col.from, col.to)
