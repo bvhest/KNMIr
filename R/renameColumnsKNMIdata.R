@@ -79,13 +79,15 @@ setNames <-
 #       # https://stackoverflow.com/questions/20987295/rename-multiple-columns-by-names
 #       dplyr::rename_at(vars(oldnames), ~ newnames)
 
+    existing <- match(col.from, names(x))
+    names(x)[na.omit(existing)] <- col.to[which(!is.na(existing))]
 
-    if (!allow.absent.cols) {
-      r <- data.table::setnames(x, col.from, col.to)
-    } else {
-      ix <- match(names(x), col.from, 0L)
-      r <- data.table::setnames(x, col.from[ix], col.to[ix])
-    }
+    # if (!allow.absent.cols) {
+    #   r <- data.table::setnames(x, col.from, col.to)
+    # } else {
+    #   ix <- match(names(x), col.from, 0L)
+    #   r <- data.table::setnames(x, col.from[ix], col.to[ix])
+    # }
 
-    return(r)
+    return(x)
   }
