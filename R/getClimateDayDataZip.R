@@ -156,7 +156,7 @@ get_daily_data_from_prepared_zip <-
 #' @description
 #' \code{get_climate_data_zip} retrieves KNMI data by downloading the prepared KNMI zip-files.
 #'
-#'#' Depricated function. Please use '\code{get_daily_data_from_prepared_zip}' instead.
+#' Depricated function. Please use '\code{get_daily_data_from_prepared_zip}' instead.
 #'
 #' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
 #' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd'.

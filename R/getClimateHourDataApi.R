@@ -17,7 +17,7 @@
 #' @return a tibble.
 #' @format The returned data frame contains the following columns:
 #' \itemize{
-#'   \item STN      = ID of measurementstation;
+#'   \item STN      = ID of measurement station;
 #'   \item YYYYMMDD = Datum (YYYY=jaar MM=maand DD=dag);
 #'   \item  HH       = tijd (HH=uur, UT.12 UT=13 MET, 14 MEZT. Uurvak 05 loopt van 04.00 UT tot 5.00 UT;
 #'   \item  DD       = Windrichting (in graden) gemiddeld over de laatste 10 minuten van het afgelopen uur (360=noord, 90=oost, 180=zuid, 270=west, 0=windstil 990=veranderlijk. Zie http://www.knmi.nl/kennis-en-datacentrum/achtergrond/klimatologische-brochures-en-boeken;
@@ -42,7 +42,7 @@
 #'   \item  S        = Sneeuw 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
 #'   \item  O        = Onweer 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
 #'   \item  Y        = IJsvorming 0=niet voorgekomen, 1=wel voorgekomen in het voorgaande uur en/of tijdens de waarneming;
-# }
+#' }
 #' @keywords historic weather data by hour
 #' @export
 #'

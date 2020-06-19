@@ -2,6 +2,15 @@ library(dplyr)
 library(lubridate)
 library(stringr)
 
+# for stand-alone testing:
+# library(tinytest)
+# source("./R/getClimateDayDataZip.R")
+# source("./R/get_weather_forecast.R")
+# source("./R/utility_functions.R")
+# source("./R/renameColumnsKNMIdata.R")
+# load("./data/stations.RData")
+
+
 # **********************************************************************************************************************
 # prepare data for renaming columns
 #
@@ -40,19 +49,20 @@ describing_column_names <-
     "gemBewolking",
     "gemRelVocht","maxRelVocht","uurMaxRelVocht","minRelVocht","uurMinRelVocht",
     "standaardDev_minTemp","standaardDev_gemTemp","standaardDev_maxTemp","standaardDev_neerslag",
-    "neerslagKans","windkracht","dogVanJaar", "jaar", "maand","week","dag")
+    "neerslagKans","windkracht","dogVanJaar", "jaar", "maand","week","dag", "doy")
 
 # **********************************************************************************************************************
 # test renaming of all 41 columns from land-based stations
 # **********************************************************************************************************************
 dd_renamed <-
-  rename_columns_KNMI_data(dd)
+  rename_KNMI_column_names(dd)
 
 # expect_equal(colnames(dd_renamed), describing_column_names)
 # expect_identical(colnames(dd_renamed), describing_column_names)
 # expect_equivalent(colnames(dd_renamed), describing_column_names)
 
-expect_true(all(colnames(dd_renamed) %in% describing_column_names))
+expect_true(all(colnames(dd_renamed) %in% describing_column_names),
+            info = "test renaming of all 41 columns from land-based stations")
 
 # **********************************************************************************************************************
 # test renaming of subset of columns (the 31 columns from sea-based stations)
@@ -63,9 +73,10 @@ dd <- get_daily_data_from_prepared_zip(stationID = 201,
                                        station_type = "sea")
 
 dd_renamed <-
-  rename_columns_KNMI_data(dd)
+  rename_KNMI_column_names(dd)
 
-expect_true(all(colnames(dd_renamed) %in% describing_column_names))
+expect_true(all(colnames(dd_renamed) %in% describing_column_names),
+            info = "test renaming of all 41 columns from sea-based stations")
 
 
 # **********************************************************************************************************************
@@ -74,9 +85,10 @@ expect_true(all(colnames(dd_renamed) %in% describing_column_names))
 dd <- get_6day_weather_forecast()
 
 dd_renamed <-
-  rename_columns_KNMI_data(dd)
+  rename_KNMI_column_names(dd)
 
-expect_true(all(colnames(dd_renamed) %in% describing_column_names))
+expect_true(all(colnames(dd_renamed) %in% describing_column_names),
+            info = "test renaming of columns from 6 day weather forecast")
 
 
 # **********************************************************************************************************************
@@ -85,6 +97,7 @@ expect_true(all(colnames(dd_renamed) %in% describing_column_names))
 dd <- get_14day_weather_forecast()
 
 dd_renamed <-
-  rename_columns_KNMI_data(dd)
+  rename_KNMI_column_names(dd)
 
-expect_true(all(colnames(dd_renamed) %in% describing_column_names))
+expect_true(all(colnames(dd_renamed) %in% describing_column_names),
+            info = "test renaming of columns from 14 day weather forecast")

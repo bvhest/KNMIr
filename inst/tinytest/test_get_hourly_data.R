@@ -1,3 +1,8 @@
+library(dplyr)
+library(lubridate)
+library(stringr)
+
+
 # check default behavior (all stations, start-date is start of this year, end-date is yesterday)
 # note: resulting dataframe can take long to retrieve.
 dd <- get_hourly_data()

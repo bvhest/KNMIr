@@ -1,16 +1,16 @@
 #' @title rename columns in the raw KNMI dataset.
 #'
 #' @description
-#' \code{rename_columns_KNMI_data} provides more readable names for the different measurement variables.
+#' \code{rename_KNMI_column_names} provides more readable names for the different measurement variables.
 #'
-#' @param data data-frame with KNMI-data that has been obtained with one of the function \code{\link{get_daily_data}},
+#' @param daily_data data-frame with KNMI-data that has been obtained with one of the function \code{\link{get_daily_data}},
 #' \code{\link{get_daily_data_from_prepared_zip}}, \code{\link{get_daily_data}}, \code{\link{get_6day_weather_forecast}},
 #' \code{\link{get_14day_weather_forecast}} or \code{\link{subset_KNMI_data}}.
 #'
 #' @return data-frame with subset of the KNMI-data.
 #' @export
 #'
-rename_columns_KNMI_data <-
+rename_KNMI_column_names <-
   function(daily_data) {
 
     # provide more meaninfull column names:
@@ -37,57 +37,34 @@ rename_columns_KNMI_data <-
         "gemBewolking",
         "gemRelVocht","maxRelVocht","uurMaxRelVocht","minRelVocht","uurMinRelVocht",
         "standaardDev_minTemp","standaardDev_gemTemp","standaardDev_maxTemp","standaardDev_neerslag",
-        "neerslagKans","windkracht","dogVanJaar", "jaar", "maand","week","dag")
+        "neerslagKans","windkracht","doy", "jaar", "maand","week","dag")
 
     daily_data <-
-     setNames(daily_data,
-              col.from = KNMI_kolomnamen,
-              col.to = beschrijvende_kolomnamen)
+      set_column_names(daily_data,
+                       col.from = KNMI_kolomnamen,
+                       col.to = beschrijvende_kolomnamen)
 
     return(daily_data)
 }
 
-# **********************************************************************************************************************
-#
-# hulp-functies
-#
-# **********************************************************************************************************************
+#' @title rename columns in the raw KNMI dataset.
+#'
+#' @description
+#' \code{rename_columns_KNMI_data} provides more readable names for the different measurement variables.
+#'
+#' Depricated function. Please use '\code{rename_KNMI_column_names}' instead.
+#'
+#' @param daily_data data-frame with KNMI-data that has been obtained with one of the function \code{\link{get_daily_data}},
+#' \code{\link{get_daily_data_from_prepared_zip}}, \code{\link{get_daily_data}}, \code{\link{get_6day_weather_forecast}},
+#' \code{\link{get_14day_weather_forecast}} or \code{\link{subset_KNMI_data}}.
+#'
+#' @return data-frame with subset of the KNMI-data.
+#' @export
+#'
+rename_columns_KNMI_data <-
+  function(daily_data) {
 
-# function to rename column-names when not all columns are present.
-#
-# source: http://stackoverflow.com/questions/29380447/using-data-tablesetnames-when-some-column-names-might-not-be-present
-#
-setNames <-
-  function(x,
-           col.from,
-           col.to,
-           allow.absent.cols = TRUE) {
+    print("Depricated function. Please use 'rename_KNMI_column_names' instead.")
 
-    # https://stackoverflow.com/questions/44452108/rename-multiple-columns-given-character-vectors-of-column-names-and-replacement
-    # BUT DOES NOT WORK for me...
-    # r <-
-    #   x %>%
-    #   dplyr::rename_at(vars(all_of(col.from)), ~col.to)
-    # r <-
-    #   x %>% rename_at(vars(col.from), function(x) col.to)
-
-#     cols <- setNames(col.from, col.to)
-#     x <-
-#       df %>%
-#       # https://stackoverflow.com/questions/43487773/how-to-rename-selected-columns-using-dplyr-with-new-column-names-as-strings
-# #      dplyr::rename_(.dots = cols)
-#       # https://stackoverflow.com/questions/20987295/rename-multiple-columns-by-names
-#       dplyr::rename_at(vars(oldnames), ~ newnames)
-
-    existing <- match(col.from, names(x))
-    names(x)[na.omit(existing)] <- col.to[which(!is.na(existing))]
-
-    # if (!allow.absent.cols) {
-    #   r <- data.table::setnames(x, col.from, col.to)
-    # } else {
-    #   ix <- match(names(x), col.from, 0L)
-    #   r <- data.table::setnames(x, col.from[ix], col.to[ix])
-    # }
-
-    return(x)
+    return(rename_KNMI_column_names(daily_data))
   }

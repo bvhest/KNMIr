@@ -1,10 +1,13 @@
 Package: KNMIr
+Author: Bart van Hest
+Maintainer: Bart van Hest <hestbv@gmail.com>
 Title: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI
-Version: 0.3.0
-Date: 2017-08-08
+Version: 0.4.0.1
+Date: 2020-05-26
 Type: Package
-Authors@R: person("Bart", "van Hest", email = "hestbv@gmail.com",
-                  role = c("aut", "cre"))
+Authors@R: c( person("Bart", "van Hest", 
+                     email = "hestbv@gmail.com",
+                     role = c("aut", "cre")))
 Description: This package provides functions to retrieve raw and processed climate
     data from the official Dutch meteorological institute (KNMI). For some stations data goes back to 1900. Two functions 
     are provied to retrieve the 6-day weather forecast from the KNMI and the 14-day forecast from the Weerplaza-website.
@@ -13,22 +16,25 @@ Description: This package provides functions to retrieve raw and processed clima
     are available, such as a function that calculates the Huglin- or VE-index.
     The package also contains two KNMI datasets; one with all measurement stations and one with 
     long term averages from 2000-2015.
+URL: https://github.com/hestbv/KNMIr
+License: GPL-3
+LazyLoad: true
+LazyData: true
 Depends:
-    R (>= 3.2.1)
+    R (>= 3.5.0)
 Imports:
-    dplyr,
     plyr,
-    data.table,
+    dplyr,
     stringr,
-    RCurl,
+    readr,
+    lubridate,
     rvest,
     xml2,
     ggplot2,
     ggmap
-License: GPL-3
-LazyData: true
-Encoding: UTF-8
-RoxygenNote: 6.1.1
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    tinytest
 VignetteBuilder: knitr
+Encoding: UTF-8
+RoxygenNote: 7.1.0
