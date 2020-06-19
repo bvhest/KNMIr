@@ -7,19 +7,20 @@
   - provide English names for the variable-codes, next to the Dutch translations.
     - change source of KNMI stations to http://projects.knmi.nl/datacentrum/catalogus/catalogus/catalogus-gegevens-overzicht.html
       zie http://projects.knmi.nl/datacentrum/catalogus/catalogus/content/nl-obs-surf-stationslijst.htm
-  - remove as many package dependencies as possible,
-    change to the tidyverse-packages.
   - test-scripts: tidyverse library toegevoegd (kan mogelijk compacter obv alleen dplyr).
   - replace data.table function by tijdyverse equivalent
   - add the station name to all daily/hourly data.
   - make function subset_KNMI_data suitable for subsetting df's with renamed columns
+  - add support for KMI (BE) and DWD (DE)
 
 ## Done
 
-  - DONE: add the data from the sea-based stations
-  - DONE: retrieve the six day forecast from the KNMI-website.
-  - DONE: retrieve the 14 day forecast from the Weerplaza-website.
-  - DONE: corrigeer get_xxday_weather_forecast: maak weerstation configurabel
+  - 2018-xx-xx: add the data from the sea-based stations
+  - 2018-xx-xx: retrieve the six day forecast from the KNMI-website.
+  - 2018-xx-xx: retrieve the 14 day forecast from the Weerplaza-website.
+  - 2020-06-18: corrigeer get_xxday_weather_forecast: maak weerstation configurabel
+  - 2020-06-18: remove as many package dependencies as possible,
+    change to the tidyverse-packages. Note: there is advice not to do this in packages (or at least not to use the pipe operator. This may need some changes to be reverted).
 
 ## Bugs
 
