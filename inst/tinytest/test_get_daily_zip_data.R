@@ -31,17 +31,11 @@ expect_equal(ncol(dd), 41)
 # check non-default behavior: all sea-based stations, this year.
 # **********************************************************************************************************************
 station_count <- 13L
-end_date <-
-  (lubridate::today()-2) %>% # sea-based data lags the land-based data: adjust end date.
-  as.character() %>%
-  stringr::str_remove_all(pattern = "-") %>%
-  as.integer()
 
 dd <- get_daily_data_from_prepared_zip(station_type = "sea")
 
 expect_equal(length(unique(dd$STN)), station_count)
 expect_equal(min(dd$YYYYMMDD), start_date)
-expect_equal(max(dd$YYYYMMDD), end_date)
 # check number of returned columns
 expect_equal(ncol(dd), 31)
 
