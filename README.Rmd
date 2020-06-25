@@ -20,9 +20,9 @@ For some stations, data goes back to 1900.
 
 The data can be subsetted based on year and/or specified variables. The returned data is converted to SI-units, when 
 necessary. 
-Several additional functions are available, such as a function that calculate the Huglin- or VE-index. 
+Several additional functions are available for plotting the locations of the weather stations and a meteogram. 
 
-The package also contains two KNMI datasets, one with the measurement stations, both on and and at sea, and the other with a reference set of long term averages over the period 1999-2014.
+The package also contains two KNMI data-sets, one with metadata for the measurement stations, both on land and at sea, and the other with a reference set of long-term averages over the period 1999-2014. In addition there is a data-set that can be used to convert wind-scales. Finally there is a map of The Netherlands.
 
 
 ### Examples
