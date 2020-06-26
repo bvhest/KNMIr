@@ -23,6 +23,7 @@ LazyData: true
 Depends:
     R (>= 3.5.0)
 Imports:
+    magrittr,
     plyr,
     dplyr,
     stringr,
