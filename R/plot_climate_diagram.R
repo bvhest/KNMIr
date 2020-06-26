@@ -69,7 +69,7 @@ plot_climate_diagram <- function (data,
    labels <-
      c(paste0("extreme values ", startYear, "-", currentYear),
        paste0("normal values ", startYear, "-", endYear),
-       paste0("current year ", currentYear))
+       paste0("values ", currentYear))
 
    plotData <-
      data %>%
