@@ -77,13 +77,13 @@ get_daily_data <-
     if (missing(from))
       from <-
         lubridate::today() %>%
-        lubridate::year() %>%
+        lubridate::year(.) %>%
         stringr::str_glue(., "0101")
     if (missing(to))
       to <-
         (lubridate::today() - 1) %>% # yesterday
         as.character() %>%
-        stringr::str_remove_all(pattern = "-")
+        stringr::str_remove_all(., pattern = "-")
 
     if (!is.character(from) | !is.character(to) | stringr::str_length(from) %% 2 == 1 | stringr::str_length(to) %% 2 == 1) {
       stop("The values for 'from' and 'to' must be a string with a value that describes the date in the format 'YYYY', 'YYYYMM' or 'YYYYMMDD'.")
@@ -106,11 +106,11 @@ get_daily_data <-
 
         to_date <-
           lubridate::ymd(to) %>%
-          lubridate::ceiling_date(unit = "month") - 1
+          lubridate::ceiling_date(., unit = "month") - 1
         to_date <-
           to_date %>%
           as.character() %>%
-          stringr::str_remove_all(pattern = "-")
+          stringr::str_remove_all(., pattern = "-")
       }
     }
     if (as.numeric(to_date) < as.numeric(from_date))
