@@ -18,7 +18,7 @@
 #' weeknumber, daynumner, year.
 #'
 #' @param data data-frame with KNMI-data that has been obtained with the function 'getClimateDateSet' or 'getClimateDateInBulk'.
-#' @param startyear start-year for the selection. Default is 2006. Note that the end-year is always the most current year in the data-set.
+#' @param startyear start-year for the selection. Default is 1901 Note that the end-year is always the most current year in the data-set.
 #' @param variables list with variables that should be returned from the data-frame. Default is ("FG","TG","TN","TX","SQ","SP","Q","RH","NG").
 #'
 #' @return data-frame met subset van de KNMI-data.
@@ -40,7 +40,7 @@
 #'
 subset_data <-
   function(data,
-           startyear = 2006,
+           startyear = 1901,
            variables = c("FG","TG","TN","TX","SQ","SP","Q","RH","NG")) {
 
     # ToDO: check params
