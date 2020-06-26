@@ -20,11 +20,11 @@ find_nearest_KNMI_station <-
   function(lat, lon, active = TRUE) {
 
     # perform some sanity checks on the input
-    if(!(is.numeric(lat) & is.numeric(lon)))
-      stop("The values for 'lon' and 'lat' must contain numerical.")
     if(length(lat) > 1 | length(lon) > 1)
       stop("The values for 'lon' and 'lat' must contain a single location/value.")
-    if(abs(lat) > 90 | abs(lon) > 180)
+    if(!(is.numeric(lat) && is.numeric(lon)))
+      stop("The values for 'lon' and 'lat' must contain numerical values.")
+    if(abs(lat) > 90 || abs(lon) > 180)
       stop("The latitude must be between -90 and 90, the longitude between -180 and 180.")
 
     # store lat/lon into dataframe
@@ -33,13 +33,6 @@ find_nearest_KNMI_station <-
 
     # load data of KNMI-stations
     utils::data("stations")
-
-    # find the nearest station
-    # distances <-
-    #   earth.distance(stations, location) %>%
-    #   as.data.frame()
-    # names(distances)[1] <- "distance"
-    # distance.to.stations <- cbind(stations, distances)
 
     distance.to.stations <-
       stations %>%
