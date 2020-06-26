@@ -9,7 +9,8 @@
 #'
 #' @param data dataframe containing daily measurements for the variable
 #' @param column the name of the variable to be plotted. The name must equal the column name in the dataframe. Note:
-#' at the moment only the mean temperature (gemTemp) can be selected.
+#' at the moment only the mean temperature (gemTemp), precipitation (dagTotaalNeerslag), number of sun hours (zon)
+#' and wind force (gemWind) can be selected.
 #' @param startYear start year of the period for which the average values are calculated. Default is 1981.
 #' @param endYear end year of the period for which the average values are calculated. Default is 2010.
 #' @param currentYear the year for which the daily values must be shown. When not provided, the most current year from
@@ -62,13 +63,13 @@ plot_climate_diagram <- function (data,
 
    if (missing(title)) {
       title <- paste0(stationsNaam, ", The Netherlands : average monthly ", variabeleNaam)
-      subtitle <- paste0("Lat: ", stationsLat, ", Lon: ", stationsLon)
    }
+   subtitle <- paste0("Lat: ", stationsLat, ", Lon: ", stationsLon)
 
    labels <-
      c(paste0("extreme values ", startYear, "-", currentYear),
-       paste0("normal values ", startYear, "-2010"),
-       paste0("values ", currentYear))
+       paste0("normal values ", startYear, "-", endYear),
+       paste0("current year ", currentYear))
 
    plotData <-
      data %>%
@@ -97,10 +98,12 @@ plot_climate_diagram <- function (data,
    for (m in 1:12) {
       maandgegevens$minJaar[m] <-
         max(plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m,]$minYvar
-                    ,]$year, na.rm = TRUE)
+                    ,]$year,
+            na.rm = TRUE)
       maandgegevens$maxJaar[m] <-
         max(plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m,]$maxYvar
-                    ,]$year, na.rm = TRUE)
+                    ,]$year,
+            na.rm = TRUE)
    }
 
    # create plot:
@@ -120,20 +123,27 @@ plot_climate_diagram <- function (data,
    }
 
    p <-
-     ggplot2::ggplot(data = plotData,
-                     ggplot2::aes(x = month, y = yvar, colour = "extrema")) +
-     ggplot2::geom_boxplot(ggplot2::aes(group = month),
-                          show.legend = FALSE,
-                          fill = "blue",
-                          outlier.shape = 19,
-                          outlier.size = 0,
-                          outlier.stroke = 0) +
-     ggplot2::geom_smooth(data = plotData[plotData$year <= 2010,],
-                           ggplot2::aes(x = month, y = yvar, colour = "normaal"),
-                           method = "auto",
-                           se = FALSE,
-                           formula = y ~ median(x)) +
-     ggplot2::geom_smooth(data = plotData[plotData$year == currentYear,],
+     ggplot2::ggplot() +
+     # boxplot with all the extremes
+     ggplot2::geom_boxplot(data = plotData,
+                           ggplot2::aes(x = month, y = yvar, group = month, colour = "extrema"),
+                           show.legend = FALSE,
+                           fill = "blue",
+                           outlier.shape = 19,
+                           outlier.size = 0,
+                           outlier.stroke = 0) +
+     # average value for the period start year (1981) up to the end year (2010)
+     ggplot2::geom_smooth(data = plotData %>%
+                            dplyr::filter(year >= startYear & year <= endYear) %>%
+                            dplyr::group_by(month) %>%
+                            dplyr::summarise(yvar = median(yvar)),
+                          ggplot2::aes(x = month, y = yvar, colour = "normaal"),
+                          method = "auto",
+                          se = FALSE,
+                          formula = y ~ x) +
+     # data for current year
+     ggplot2::geom_smooth(data = plotData %>%
+                            dplyr::filter(year == currentYear),
                            ggplot2::aes(x = month, y = yvar, colour = "recent"),
                            method = "loess",
                            se = FALSE,
@@ -155,7 +165,8 @@ plot_climate_diagram <- function (data,
                     legend.position = "bottom") +
      ggplot2::labs(x = "",
                    y = ylabel) +
-     ggplot2::ggtitle(label = title,subtitle = subtitle)
+     ggplot2::ggtitle(label = title,
+                      subtitle = subtitle)
 
    print(p)
 }
