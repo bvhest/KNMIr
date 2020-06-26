@@ -1,0 +1,276 @@
+---
+title: "KNMIr: climate data from the Royal Netherlands Meteorological Institute (KNMI)"
+author: "Bart van Hest"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 7
+    fig_height: 6
+vignette: >
+  %\VignetteIndexEntry{KNMIr: climate data from the Royal Netherlands Meteorological Institute (KNMI)}
+  %\VignetteEngine{knitr::knitr}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE, echo = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Intro
+
+The package KNMIr provides functions to retrieve raw and processed climate
+data from the official Dutch meteorological institute (KNMI). For some stations, data goes back to 1900.
+
+The data can be subsetted based on year and specified variables. The returned
+data is converted to SI-units, when necessary. 
+
+Several helper functions are available, such as a function that calculates the Huglin- or VE-index.
+
+The package also contains two KNMI datasets with all measurement stations and with long term averages from 2000-2015.
+
+This vignette presents some example use-cases.
+
+
+
+# Package installation
+
+The package KNMIr is not yet available on CRAN. It can be installed from GitHub with the following code:
+
+```r
+# if not yet installed, install the package 'devtools' with:
+#install.packages("devtools")
+library(devtools)
+devtools::install_github("hestbv/KNMIr")
+```
+
+
+
+# Package usage
+
+Information on the available measurement stations is available in the data-frame `stations`;
+
+```{r stations, INFO = FALSE, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(lubridate)
+
+library(KNMIr)
+
+data(stations)
+glimpse(stations)
+```
+
+It shows the station id, nearest city, longitude and lattitude, start-date and end-date of the measurements and an url that provides more detailed information on the measurement station.
+
+The available measurement stations can also be viewed with the functions:
+
+  1. `list_stations`, which prints the most important station information to the console,
+  2. `plot_stations`, which plots the station identification on a map of The Netherlands.
+
+Raw climate data can be retrieved with three functions; 
+
+  1. `get_hourly_data`, hourly data for specific combinations of stations and preiods through the KNMI API,
+  2. `get_daily_data`, daily data for specific combinations of stations and preiods through the KNMI API,
+  3. `get_daily_data_from_prepared_zip` daily data for faster download of large datasets that have been prepared by the KNMI and are available as zip-files.
+
+These functions accept the `station id` for a specific measurement station, or the value `ALL` for all stations.
+
+By default, all variables are downloaded. The data can be subsetted to specific variables with the function `subset_data()`. This function accepts a start-year to reduce the measurements to the period from the start-year up to the most recent measurement, and a list of variables to select only the variables of interest.
+
+Note that this function also transforms some measurements to standard SI units (eg as degrees Celcius instead of the original 0.1 degrees Celsius, or m/s instead of the KNMI data that is given in 0.1 m/s).
+
+Another helper-function is `rename_KNMI_column_names()`, which can be used to translate the codes for the variables into more readable names.
+
+The functionality to add so-called degree-days, which can be viewed as a measure for the warmth during the growing season, has been moved to a new package `BWBr`. This package `BWBr` has been created for the analysis of cool-climate wine growing in The Netherlands and contains functions to enhance and plot the KNMI weather data.
+
+-
+
+# Cases
+
+## list and plot stations
+
+`list_stations` and `plot_stations` provide two ways to show some information on the measurement station.
+ Data on all or only the active measurement stations can be obtained by passing the parameter `is_active = FALSE/TRUE`.
+ 
+```{r print_stations, INFO = FALSE, warning = FALSE}
+head(list_stations(is_active = FALSE))
+```
+
+```{r plot_stations, INFO = FALSE, warning = FALSE}
+plot_stations()
+```
+
+
+## select stations
+
+Provide the measurement station that is closest to a given geographical location. In this example the city of Tilburg (51.561, 5.084) is used.
+
+```{r find_station, INFO = FALSE, warning = FALSE}
+Tilburg <- data.frame(lat = 51.561, lon = 5.084) # WGS84 met NS station als centrum
+find_nearest_KNMI_station(lat = Tilburg$lat, lon = Tilburg$lon)
+```
+
+
+## retrieve KNMI data
+
+```{r get_data, INFO = FALSE, warning = FALSE, message = FALSE}
+current_year <- lubridate::year(lubridate::today())
+
+# get data for the measurement station Gilze-Rijen (id=350) from Januari 1st, 2016 up to the most recent date provided by the KNMI (which is 'today'-1 day).
+data <- 
+  get_daily_data(stationID = 350, 
+                 from = "20200101") %>% 
+   # only keep the following variables:
+   subset_data(variables = c("FG", "TG", "TN", "TX", "SQ", "SP", "Q", "RH", "NG")) %>%
+   # change the codes for these variables into more readable names:
+   rename_KNMI_column_names()
+
+glimpse(data)
+```
+
+Next, load the long-term averages over the period 1999-2014 of the KNMI measurement stations and compare the average temperature in the current year with the long-term average in a plot.
+
+```{r plot_data, INFO = FALSE, warning = FALSE, message = FALSE}
+data(knmi_langJarigGem)
+
+knmi.langJarigGem <- 
+  knmi.langJarigGem %>%
+  filter(stationID == 350)
+
+library(ggplot2)
+
+p <- 
+  ggplot() + 
+  geom_line(data = data,
+            aes(x = doy, y = gemTemp),
+            color = "#FA0000", show.legend = FALSE, size = 2) + 
+  geom_line(data = knmi.langJarigGem,
+            aes(x = doy, y = gemTemp),
+            color = "#850000", show.legend = FALSE, size = 1) +
+  scale_x_continuous(breaks = round(seq(0, 400, by = 30),1)) +
+  scale_y_continuous(breaks = round(seq(0, 40, by = 10),1)) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(x = "day-of-the-year", y = "average temperature") +
+  ggtitle(label = paste("Daily average temperature in", current_year, "vs long-term average"),
+          subtitle = paste("source: KNMI, station: Gilze-Rijen (NL), creation date:",
+                           format(Sys.Date(), 
+                                  format="%d-%m-%Y"), 
+                           sep=" "))
+
+print(p)
+```
+
+
+
+## KNMI weather forecast
+
+The KNMI provides a [six-day weather forecast](http://www.knmi.nl/nederland-nu/weer/verwachtingen) on it's website. Unfortunately, it's only available for the city of 'De Bilt', which is located at the centre of The Netherlands.
+
+Let's add the forecast to the previous plot.
+
+```{r get_forecast, INFO = FALSE, warning = FALSE, message = FALSE}
+# get the six-day weather forecast.
+forecast <- 
+  get_6day_weather_forecast()
+
+glimpse(forecast)
+```
+
+As can be seen, this dataset contains lower- and upper-bounds for some variables, indicating the uncertainty in the forecasted values.
+
+```{r show_forecast, INFO = FALSE, warning = FALSE, message = FALSE}
+forecast <- 
+  forecast %>%
+   rename_KNMI_column_names() # 260 is the measurement station at De Bilt
+
+# pretend that the forecast for De Bilt is also valid for Gilze-Rijen:
+print(p + 
+  geom_line(data = forecast,
+            aes(x = doy, 
+                y = gemTemp),
+            color = "#0000FF", show.legend = FALSE, size = 2) + 
+  ggtitle(label = "6 day forecasted temperature vs long-term average",
+          subtitle = paste("source: KNMI, station: Gilze-Rijen (NL), creation date:",
+                           format(Sys.Date(), 
+                                  format="%d-%m-%Y"), 
+                           sep=" "))
+     )
+```
+
+
+## Weerplaza 14-day weather forecast
+
+Weerplaza provides a [fourteen-day weather forecast](https://www.weerplaza.nl/nederland/) on it's website. This forecast 
+is available for most major cities.
+
+Let's add the 14-day forecast to the previous plot.
+
+```{r get_forecast14, INFO = FALSE, warning = FALSE, message = FALSE}
+
+# get the fourteen-day weather forecast for Gilze-Rijen.
+# note that passing 'station = 350' as numeric parameter will also work.
+forecast14 <- 
+  get_14day_weather_forecast(station = "Gilze-Rijen")
+
+# rename the columns
+forecast14 <- 
+  forecast14 %>%
+   rename_KNMI_column_names()
+
+print(p + 
+  geom_line(data = forecast14,
+            aes(x = doy, 
+                y = gemTemp),
+            color = "#00FFFF", show.legend = FALSE, size = 2) + 
+  geom_line(data = forecast,
+            aes(x = doy, 
+                y = gemTemp),
+            color = "#0000FF", show.legend = FALSE, size = 2) + 
+  ggtitle(label = "6 and 14 day forecasted temperature vs long-term average",
+          subtitle = paste("source: Weerplaza, station: Gilze-Rijen (NL), creation date:",
+                           format(Sys.Date(), 
+                                  format="%d-%m-%Y"), 
+                           sep=" "))
+  )
+```
+
+
+## Climate characteristics
+
+The characteristics of the climate (meteogram) for a certain location can be shown with the function 'r plot_climate_diagram'. The four characteristics mean temperature, precipitation, sun hours and wind can be selected for presentation.
+
+```{r plot_climate_diagram_temp, INFO = FALSE, warning = FALSE, message = FALSE}
+# get data for the measurement station Gilze-Rijen (id=350) from January 1st, 1981 up to the most recent date provided by the KNMI (which is 'today'-1 day).
+weather_data <- 
+  get_daily_data(stationID = 350, 
+                 from="19810101") %>% 
+  subset_data(variables = c("FG", "TG", "TN", "TX", "SQ", "SP", "Q", "RH", "NG")) %>%
+  rename_KNMI_column_names()
+
+plot_climate_diagram(data = weather_data,
+                     column = "gemTemp",
+                     startYear = 1981,
+                     endYear = 2010,
+                     currentYear = current_year)
+```
+
+And the same for the precipitation, sun hours and wind:
+
+```{r plot_climate_diagram_others, ECHO = FALSE, INFO = FALSE, warning = FALSE, message = FALSE}
+plot_climate_diagram(data = weather_data,
+                     column = "dagTotaalNeerslag",
+                     currentYear = current_year)
+plot_climate_diagram(data = weather_data,
+                     column = "gemWind",
+                     currentYear = current_year)
+plot_climate_diagram(data = weather_data,
+                     column = "zon",
+                     currentYear = current_year)
+```
+
+
+
+## Feedback
+
+Feedback on this package, or this vignette, can be provided via [github](https://github.com/BvHest/KNMIr) or by [e-mail](hestbv@gmail.com)!
