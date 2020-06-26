@@ -170,7 +170,7 @@ get_6day_weather_forecast <-
 #' @export
 #'
 get_14day_weather_forecast <-
-  function(station = 260) {
+  function(station = 260) { # default station is 260 (De Bilt, KNMI)
 
     # perform some sanity checks on the input
     station_is_known <-
@@ -179,19 +179,19 @@ get_14day_weather_forecast <-
     if(!station_is_known)
       stop("The value for 'station' does not match any known KNMI measurement station.")
 
-    # default station is 260 (De Bilt, KNMI)
+    # check if the station is passed as a code or a name
     if (is.numeric(station)) {
-      stationID = station
-      stationName = stations$plaats[stations$stationID == stationID]
+      station_ID = as.numeric(station)
+      station_Name = stations$plaats[stations$stationID == station_ID]
     } else {
-      stationName = station
-      stationID = stations$stationID[stations$plaats == stationName]
+      station_Name = station
+      station_ID = stations$stationID[stations$plaats == station_Name]
     }
 
     # haal 6-daagse voorspelling:
     base_URL <- "https://www.weerplaza.nl/nederland/"
     location_URL <-
-     get_URL_based_onlocation(station)
+     get_URL_based_on_location(station)
     URL <-
      paste0(base_URL, location_URL)
 
@@ -237,11 +237,12 @@ get_14day_weather_forecast <-
 
     datum <- unique(rvest::html_text(datum))
     size <- length(datum)
+
     voorspelling <-
-     data.frame(stationID = rep(stationID, size),
-                station = rep(stationName, size),
+     data.frame(stationID = rep(station_ID, size),
+                station = rep(station_Name, size),
                 YYYYMMDD = rep("20000101", size),
-                date = as.Date("2000-01-01") + 1:size, # just dummy dates
+                date = rep(as.Date("2000-01-01"), size),
                 maxTemp = double(size),
                 maxTempSD = double(size),
                 minTemp = double(size),
@@ -257,6 +258,7 @@ get_14day_weather_forecast <-
 
     # nu alles in een loopje:
     for (i in 1:size) {
+      print(paste("i", i))
       voorspelling$date[i] <- as.Date(datum[i], format = "%d%m%Y")
       voorspelling$YYYYMMDD[i] <- as.character(voorspelling$date[i], format = "%Y%m%d")
       # maxTemp
@@ -323,7 +325,7 @@ converteer_beaufort_schaal <- function(windkracht) {
 }
 
 # decode station id of naam voor Weerplaza URL
-get_URL_based_onlocation <-
+get_URL_based_on_location <-
   function(station) {
 
     locationURL <-
