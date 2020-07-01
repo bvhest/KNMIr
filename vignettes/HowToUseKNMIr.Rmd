@@ -41,7 +41,7 @@ The package KNMIr is not yet available on CRAN. It can be installed from GitHub 
 # if not yet installed, install the package 'devtools' with:
 #install.packages("devtools")
 library(devtools)
-devtools::install_github("hestbv/KNMIr")
+devtools::install_github("bvhest/KNMIr")
 ```
 
 
