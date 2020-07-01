@@ -17,13 +17,13 @@ dd <- get_daily_data()
 station_count <- 47L
 start_date <-
   lubridate::today() %>%
-  lubridate::year() %>%
+  lubridate::year(.) %>%
   paste0(., "0101") %>%
   as.numeric()
 end_date <-
   (lubridate::today()-1) %>%
   as.character() %>%
-  stringr::str_remove_all(pattern = "-") %>%
+  stringr::str_remove_all(., pattern = "-") %>%
   as.numeric()
 
 # check default for parameters
@@ -57,8 +57,7 @@ expect_equal(max(dd$YYYYMMDD), end_date)
 # **********************************************************************************************************************
 station_count <- 1L
 from <-
-  lubridate::today() %>%
-  format(., "%Y%m")
+  paste0(year(lubridate::today()), "01")
 start_date <-
   from %>%
   paste0(., "01") %>%
