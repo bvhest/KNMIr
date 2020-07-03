@@ -258,7 +258,6 @@ get_14day_weather_forecast <-
 
     # nu alles in een loopje:
     for (i in 1:size) {
-      print(paste("i", i))
       voorspelling$date[i] <- as.Date(datum[i], format = "%d%m%Y")
       voorspelling$YYYYMMDD[i] <- as.character(voorspelling$date[i], format = "%Y%m%d")
       # maxTemp
