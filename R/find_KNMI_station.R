@@ -36,7 +36,7 @@ find_nearest_KNMI_station <-
 
     distance.to.stations <-
       stations %>%
-      dplyr::mutate(distance = earth.distance(lon, lat, location$lat, location$lon))
+      dplyr::mutate(distance = earth.distance(lat, lon, location$lat, location$lon))
 
     if (active) {
       # if the einddatum (enddate) has a value, this value is always in the past
@@ -46,7 +46,8 @@ find_nearest_KNMI_station <-
         dplyr::filter(is.na(einddatum))
     }
 
-    result <- distance.to.stations %>%
+    result <-
+      distance.to.stations %>%
       dplyr::arrange(distance) %>%
       dplyr::select(stationID, plaats, lat, lon, info) %>%
       dplyr::slice(1L)
