@@ -12,7 +12,7 @@ nearest_station <-
 # expect_equal(nearest_station$plaats,
 #              "Hupsel")
 expect_equal(nearest_station$plaats,
-             "Hupsel")
+             "Gilze-Rijen")
 
 # input checks
 expect_error(find_nearest_KNMI_station(location$lat))
