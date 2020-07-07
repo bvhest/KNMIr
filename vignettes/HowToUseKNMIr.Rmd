@@ -93,7 +93,7 @@ The functionality to add so-called degree-days, which can be viewed as a measure
  Data on all or only the active measurement stations can be obtained by passing the parameter `is_active = FALSE/TRUE`.
  
 ```{r print_stations, INFO = FALSE, warning = FALSE}
-head(list_stations(is_active = FALSE))
+head(list_stations(active = FALSE))
 ```
 
 ```{r plot_stations, INFO = FALSE, warning = FALSE}

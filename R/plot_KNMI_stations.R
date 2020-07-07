@@ -8,27 +8,27 @@
 #' One can show the active
 #' stations (active = TRUE, the default) or *all* stations (active = FALSE).
 #'
-#' @param active boolean to select only currently active stations. Default =
-#'   TRUE.
+#' @param active boolean filter on currently active stations. Default = TRUE.
+#' @param temperature_sensor show all stations or filter on those that (don't) provide temperature data. Default = NULL.
 #' @return data-frame with the id, name, url to station information and the
 #'   lat/lon of the nearest KNMI-station.
 #' @export
 #'
 plot_stations <-
-  function(active = TRUE) {
+  function(active = TRUE,
+           temperature_sensor = NULL) {
 
     utils::data(stations)
-    # map.nl <- get_map(location = c(lon=5.1, lat=52.2),
-    #                source = "google",
-    #                maptype = "roadmap",
-    #                zoom = 7)
-    # save(map.nl, file = "./data/map_Netherlands.rda")
     utils::data(map_Netherlands)
 
-    if (active) {
-      selected_stations <- stations[is.na(stations$einddatum),]
-    } else {
-      selected_stations <- stations
+    selected_stations <-
+      stations %>%
+      dplyr::filter(is.na(einddatum) == active)
+
+    if (!is.null(temperature_sensor)) {
+      selected_stations <-
+        selected_stations %>%
+        dplyr::filter(temp_sensor == temperature_sensor)
     }
 
     # add station labels

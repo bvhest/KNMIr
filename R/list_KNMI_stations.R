@@ -6,9 +6,11 @@
 #' Data from https://www.knmi.nl/nederland-nu/klimatologie/daggegevens,
 #' http://projects.knmi.nl/klimatologie/metadata/index.html
 #'
-#' @param is_active boolean to select only currently active stations. Default =
+#' @param active boolean to select only currently active stations. Default =
 #'   TRUE.
-#' @param  identifying_columns boolean to return only the staion identifying
+#' @param temperature_sensor filter on stations that (don't) provide temperature
+#' data. Default = TRUE. Note that the other set often only returns wind-data.
+#' @param  identifying_columns boolean to return only the station identifying
 #' columns (including if a station is active). Default = FALSE (i.e. returning
 #' all columns).
 #' @return a tibble.
@@ -19,20 +21,28 @@
 #' @keywords list weather stations
 #' @export
 list_stations <-
-  function(is_active = TRUE, identifying_columns = FALSE) {
+  function(active = TRUE,
+           temperature_sensor = TRUE,
+           identifying_columns = FALSE) {
 
     utils::data(stations)
 
     selected_stations <-
       stations %>%
-      dplyr::mutate(active = is.na(einddatum)) %>%
-      dplyr::filter(if(is_active) active else TRUE) %>%
+      # filter on (in)active stations:
+      # if the einddatum (enddate) has a value, this value is always in the past
+      # and the station is inactive, if it's NA the station is active.
+      dplyr::filter(is.na(einddatum) == active) %>%
+      # filter on stations with(out) temperature sensor:
+      dplyr::filter(temp_sensor == temperature_sensor) %>%
       dplyr::as_tibble()
 
-    if (identifying_columns)
+    if (identifying_columns) {
       selected_stations <-
         selected_stations %>%
+        dplyr::mutate(active = is.na(einddatum)) %>%
         dplyr::select(stationID, plaats, active)
+    }
 
     return(selected_stations)
   }

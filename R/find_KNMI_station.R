@@ -10,14 +10,16 @@
 #'
 #' @param lat latitude of the location (using the WGS84 coordinate system).
 #' @param lon longitude of the location (using the WGS84 coordinate system).
-#' @param active boolean to select only currently active stations. Default =
-#'   TRUE.
+#' @param active boolean to select only currently active stations. Default = TRUE.
+#' @param temperature_sensor filter on stations that (don't) provide temperature data. Default = TRUE. Note that the other set often only returns wind-data.
 #' @return data-frame with the id, name, url to station information and the
 #'   lat/lon of the nearest KNMI-station.
 #' @export
 #'
 find_nearest_KNMI_station <-
-  function(lat, lon, active = TRUE) {
+  function(lat, lon,
+           active = TRUE,
+           temperature_sensor = TRUE) {
 
     # perform some sanity checks on the input
     if(length(lat) > 1 | length(lon) > 1)
@@ -36,15 +38,13 @@ find_nearest_KNMI_station <-
 
     distance.to.stations <-
       stations %>%
-      dplyr::mutate(distance = earth.distance(lat, lon, location$lat, location$lon))
-
-    if (active) {
+      # filter on (in)active stations:
       # if the einddatum (enddate) has a value, this value is always in the past
       # and the station is inactive, if it's NA the station is active.
-      distance.to.stations <-
-        distance.to.stations %>%
-        dplyr::filter(is.na(einddatum))
-    }
+      dplyr::filter(is.na(einddatum) == active) %>%
+      # filter on stations with(out) temperature sensor:
+      dplyr::filter(temp_sensor == temperature_sensor) %>%
+      dplyr::mutate(distance = earth.distance(lat, lon, location$lat, location$lon))
 
     result <-
       distance.to.stations %>%
