@@ -116,18 +116,24 @@ get_daily_data <-
     if (as.numeric(to_date) < as.numeric(from_date))
       stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
 
-    baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
-    params <- "ALL"
-    URL <- paste0(baseURL, "?start=", from_date, "&end=", to_date, "&stns=", stationID,"&", params)
+    # baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
+    # params <- "ALL"
+    # URL <- paste0(baseURL, "?start=", from_date, "&end=", to_date, "&stns=", stationID,"&", params)
+    #
+    # data_daily <-
+    #   readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
+    #   dplyr::as_tibble()
+    #
+    # colnames(data_daily) <-
+    #   c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N",
+    #     "T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","EV24","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH","NG",
+    #     "UG","UX","UXH","UN","UNH")
 
+    # TODO: undo when possible !! (2021-03-28)
+    # parameter-based query API is broken, so use the alternative API instead which downloads zip-files with climate data
     data_daily <-
-      readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
-      dplyr::as_tibble()
+      get_daily_data_from_prepared_zip(stationID, from, to)
 
-    colnames(data_daily) <-
-      c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N",
-        "T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","EV24","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH","NG",
-        "UG","UX","UXH","UN","UNH")
 
     return(data_daily)
   }

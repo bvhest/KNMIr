@@ -2,6 +2,11 @@
 
 ## ToDo
 
+  - 2021-02-26: package is broken. The current script-based UI seems no longer supported. The following url fails:
+  http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi?start=20200101&end=20210325&stns=350&ALL
+    
+modify package to deal with new API. See https://developer.dataplatform.knmi.nl/get-started
+     * realtime data: https://api.dataplatform.knmi.nl/open-data/datasets/weer_en_luchtdruk/versions/1.0/files
   - check if station code is valid, else issue error message.
   - change station-parameter to stations-parameter (so that a list of stations can be downloaded in one call)
   - provide English names for the variable-codes, next to the Dutch translations.
@@ -12,6 +17,15 @@
   - add the station name to all daily/hourly data.
   - make function subset_KNMI_data suitable for subsetting df's with renamed columns
   - add support for KMI (BE) and DWD (DE)
+
+## KMI
+
+[Automatic weather station (AWS) daily observations](https://opendata.meteo.be/geonetwork/srv/dut/catalog.search;jsessionid=9509BF8341659133C1A4D7DB8E419D3A#/metadata/RMI_DATASET_AWS_1DAY)
+
+Link naar data:
+- [JSON-formaat](https://opendata.meteo.be/service/aws/wfs?request=GetFeature&service=WFS&version=1.1.0&typeName=aws:aws_1day&outputFormat=json)
+- [Climate statistics](https://opendata.meteo.be/geonetwork/srv/dut/catalog.search;jsessionid=9509BF8341659133C1A4D7DB8E419D3A#/metadata/RMI_DATASET_CLIMATE_STATISTICS)
+ 
 
 ## Done
 
