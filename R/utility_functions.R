@@ -41,6 +41,9 @@ tidy_data <-
       # change order of columns
       dplyr::select(STN, YYYYMMDD, date, doy, year, month, week, day, everything()) %>%
       # 4a) convert temp to degrees Celcius
+
+# ToDo: use something like mutate all
+
       dplyr::mutate(TG = TG/10.0,
                     TN = TN/10.0,
                     TX = TX/10.0,

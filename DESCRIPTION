@@ -35,6 +35,7 @@ Imports:
     ggmap
 Suggests: knitr,
     rmarkdown,
+    markdown,
     tinytest
 VignetteBuilder: knitr
 Encoding: UTF-8

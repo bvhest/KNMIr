@@ -98,7 +98,7 @@ get_hourly_data <-
     }
     if (as.numeric(to_date) < as.numeric(from_date))
       stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
-
+    getdata_uur
 
    baseURL <- "http://projects.knmi.nl/klimatologie/uurgegevens/getdata_uur.cgi"
    params <- "ALL"

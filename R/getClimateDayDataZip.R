@@ -210,8 +210,10 @@ get_land_data_zip <-
       # no other choice than to use the slower script-based API:
       print("INFO: all stations are choosen and the start-year is before the current year: reverting to the slower script-based API.")
 
-      daily_data <-
-        get_daily_data(stationID, from, to)
+      # TODO: undo when possible !! (2021-03-28)
+      # daily_data <-
+      #   get_daily_data(stationID, from, to)
+
 
     } else {
       # retrieve prepared download-files from the KNMI website
@@ -237,10 +239,10 @@ get_land_data_zip <-
         readr::read_csv(file = paste0("./temp/", file),
                         col_names = TRUE,
                         col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
-                        skip = 47) %>%
+                        skip = 51) %>%
         dplyr::as_tibble() %>%
         # correct the first column name
-        dplyr::rename(STN = `# STN`) %>%
+        dplyr::rename(STN = '# STN') %>%
         # return subset based on provided start-/end-date parameters
         dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to))
 
@@ -298,7 +300,7 @@ get_sea_data_zip <-
                         skip = 35) %>%
         dplyr::as_tibble() %>%
         # correct the first column name
-        dplyr::rename(STN = `# STN`) %>%
+        dplyr::rename(STN = '# STN') %>%
         # return subset based on provided start-/end-date parameters
         dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to)) %>%
         dplyr::bind_rows(daily_data)
