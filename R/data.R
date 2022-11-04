@@ -3,20 +3,21 @@
 #' A dataset containing the ID's and meta-data on the official KNMI measurement stations.
 #'
 #' \itemize{
-#'   \item station: ID of the station (210--391)
+#'   \item stationID: ID of the station (210--391)
 #'   \item plaats: City where the station is located
-#'   \item lon: geographical longitude (format: Decimal Degrees DDD.DDDDD°)
 #'   \item lat: geographical latitude (format: Decimal Degrees DDD.DDDDD°)
+#'   \item lon: geographical longitude (format: Decimal Degrees DDD.DDDDD°)
 #'   \item startdatum: start date of the measurement series
 #'   \item einddatum: end date of the measurement series
 #'   \item info: url pointing to the web-page with the station information
+#'   \item temp_sensor: is a temperature sensor present?
 #' }
 #'
 #' @docType data
 #' @keywords datasets
 #' @name stations
 #' @usage data(stations)
-#' @format A data frame with 35 rows and 7 variables:
+#' @format A data frame with 63 rows and 8 variables:
 #' @source \url{http://projects.knmi.nl/klimatologie/metadata/index.html}
 "stations"
 
