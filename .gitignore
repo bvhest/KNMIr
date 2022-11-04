@@ -9,3 +9,7 @@ docs
 HowToUseKNMIr.R
 HowToUseKNMIr.md
 figure
+*.zip
+temp
+tinytest_run_only_for_new_version
+toDo
