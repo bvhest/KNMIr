@@ -32,11 +32,12 @@ Imports:
     rvest,
     xml2,
     ggplot2,
-    ggmap
+    ggmap,
+    data.table
 Suggests: knitr,
     rmarkdown,
     markdown,
     tinytest
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1

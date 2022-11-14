@@ -145,7 +145,6 @@ get_daily_data_from_prepared_zip <-
         dplyr::bind_rows(sea_data)
 
     }
-
     return(daily_data)
   }
 
@@ -208,11 +207,8 @@ get_land_data_zip <-
 
     if (stationID == 'ALL' & fromYear < thisYear) {
       # no other choice than to use the slower script-based API:
-      print("INFO: all stations are choosen and the start-year is before the current year: reverting to the slower script-based API.")
-
-      # TODO: undo when possible !! (2021-03-28)
-      # daily_data <-
-      #   get_daily_data(stationID, from, to)
+      daily_data <-
+        get_daily_data(stationID, from, to)
 
 
     } else {
@@ -220,12 +216,10 @@ get_land_data_zip <-
       if(stationID == 'ALL' & fromYear == thisYear) {
         URL <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/jaar.zip"
         file <- "jaar.txt"
-
       } else {
         # retrieve all available data for this specific station:
         URL <- paste0("http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_",stationID,".zip")
         file <- paste0("etmgeg_",stationID,".txt")
-
       }
 
       # download a zip file containing broadband data, save it to the working directory
@@ -249,7 +243,6 @@ get_land_data_zip <-
     }
 
     return(daily_data)
-
   }
 
 # ophalen (prepared zip-file) data for the sea-based KNMI stations
@@ -257,7 +250,6 @@ get_sea_data_zip <-
   function(stationID = "ALL",
            from,
            to) {
-
     base_url <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_"
 
     if (stationID == "ALL")

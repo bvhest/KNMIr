@@ -122,13 +122,9 @@ get_daily_data <-
     params <- "ALL"
     URL <- paste0(baseURL, "?start=", from_date, "&end=", to_date, "&stns=", stationID,"&", params)
 
-#print(URL)
-
     data_daily <-
       readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
       dplyr::as_tibble()
-
-#print(data_daily)
 
     colnames(data_daily) <-
       c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N",
@@ -143,7 +139,6 @@ get_daily_data <-
     # parameter-based query API is broken, so use the alternative API instead which downloads zip-files with climate data
     # data_daily <-
     #   get_daily_data_from_prepared_zip(stationID, from, to)
-
 
     return(data_daily)
   }
