@@ -7,7 +7,7 @@ library(stringr)
 # **********************************************************************************************************************
 dd <- get_daily_data_from_prepared_zip()
 
-station_count <- 47L
+station_count <- 48L
 start_date <-
   lubridate::today() %>%
   lubridate::year() %>%
@@ -30,7 +30,7 @@ expect_equal(ncol(dd), 41)
 # **********************************************************************************************************************
 # check non-default behavior: all sea-based stations, this year.
 # **********************************************************************************************************************
-station_count <- 13L
+station_count <- 12L
 
 dd <- get_daily_data_from_prepared_zip(station_type = "sea")
 
@@ -87,7 +87,6 @@ dd <- get_daily_data_from_prepared_zip(stationID = 201,
 expect_equal(length(unique(dd$STN)), station_count)
 expect_equal(min(dd$YYYYMMDD), start_date)
 
-
 # **********************************************************************************************************************
 # check parameters
 # **********************************************************************************************************************
@@ -98,8 +97,11 @@ expect_error(get_daily_data_from_prepared_zip(from = "2020", to = "2019"),
 expect_error(get_daily_data_from_prepared_zip(station_type = "all"),
              pattern = "The station_type must be one of 'land', 'sea' or 'both'.")
 
-
-
+# **********************************************************************************************************************
+# check known error situation
+# **********************************************************************************************************************
+expect_error(get_daily_data_from_prepared_zip(from = "2014", to = "2020"),
+             pattern = "A download for all stations for a period > 5 years is not permitted by the KNMI API. Suggestion: download the data in batches.")
 
 # **********************************************************************************************************************
 # check deprecated functions

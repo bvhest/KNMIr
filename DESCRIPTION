@@ -2,8 +2,8 @@ Package: KNMIr
 Author: Bart van Hest
 Maintainer: Bart van Hest <hestbv@gmail.com>
 Title: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI
-Version: 0.4.0.3
-Date: 2020-07-07
+Version: 0.4.1.0
+Date: 2022-11-14
 Type: Package
 Authors@R: c( person("Bart", "van Hest", 
                      email = "hestbv@gmail.com",
@@ -14,7 +14,7 @@ Description: This package provides functions to retrieve raw and processed clima
     With helper-functions, the data can be subsetted based on year and specified variables. The returned
     data is converted to SI-units, when necessary. Several additional helper functions
     are available, such as a function that calculates the Huglin- or VE-index.
-    The package also contains two KNMI datasets; one with all measurement stations and one with 
+    The package also contains two KNMI datasets; one with all land- and sea-based measurement stations and one with 
     long term averages from 2000-2015.
 URL: https://github.com/hestbv/KNMIr
 License: GPL-3

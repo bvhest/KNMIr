@@ -51,6 +51,8 @@ get_hourly_data <-
            from,
            to) {
 
+    stop("Sorry, this function is temporarily unavailable as the KNMI changed their API.")
+
     # try to parse date-parameters
     if (missing(from))
       from <-
@@ -96,13 +98,15 @@ get_hourly_data <-
             paste0(., "24")
         }
     }
-    if (as.numeric(to_date) < as.numeric(from_date))
+    if (as.numeric(to) < as.numeric(from))
       stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
-    getdata_uur
 
+    #
+    # ToDo: download data from https://www.daggegevens.knmi.nl/klimatologie/uurgegevens
+    #
    baseURL <- "http://projects.knmi.nl/klimatologie/uurgegevens/getdata_uur.cgi"
    params <- "ALL"
-   URL <- paste(baseURL, "?start=", from_date, "&end=", to_date, "&stns=", stationID,"&", params, sep = "")
+   URL <- paste(baseURL, "?start=", from, "&end=", to, "&stns=", stationID,"&", params, sep = "")
 
    hourly_data <-
      readr::read_csv(URL, col_names = FALSE, comment = "#") %>%

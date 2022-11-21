@@ -7,12 +7,23 @@ library(tidyverse)
 location <-
   data.frame(lat = 51.6107, lon = 5.1447)
 
+# version 1
 nearest_station <-
   find_nearest_KNMI_station(location$lat, location$lon)
 
 # positive scenario
 expect_equal(nearest_station$plaats,
-             "Gilze-Rijen")
+             "Gilze-Rijen",
+             info = "test finding nearest KNMI station to a given location I.")
+
+# version 2
+nearest_station <-
+  find_nearest_KNMI_station2(location)
+
+# positive scenario
+expect_equal(nearest_station$plaats,
+             "Gilze-Rijen",
+             info = "test finding nearest KNMI station to a given location II.")
 
 # **********************************************************************************************************************
 # positive scenario 2: nearest to Kloetinge (== Hansweert, but nearest with temperature sensor == Wilhelminadorp)
@@ -24,13 +35,15 @@ nearest_station <-
   find_nearest_KNMI_station(location$lat, location$lon)
 
 expect_equal(nearest_station$plaats,
-             "Wilhelminadorp")
+             "Wilhelminadorp",
+             info = "test finding nearest KNMI station to a given location III.")
 
 nearest_station <-
   find_nearest_KNMI_station(location$lat, location$lon, temperature_sensor = FALSE)
 
 expect_equal(nearest_station$plaats,
-             "Hansweert")
+             "Hansweert",
+             info = "test finding nearest KNMI station to a given location IV.")
 
 # **********************************************************************************************************************
 # check parameters

@@ -16,20 +16,15 @@
 #'
 plot_stations <-
   function(active = TRUE,
-           temperature_sensor = NULL) {
+           temperature_sensor = TRUE) {
 
     utils::data(stations)
     utils::data(map_Netherlands)
 
     selected_stations <-
       stations %>%
-      dplyr::filter(is.na(einddatum) == active)
-
-    if (!is.null(temperature_sensor)) {
-      selected_stations <-
-        selected_stations %>%
-        dplyr::filter(temp_sensor == temperature_sensor)
-    }
+      dplyr::filter(is.na(einddatum) == active) %>%
+      dplyr::filter(temp_sensor == temperature_sensor)
 
     # add station labels
     selected_stations$text <- paste(selected_stations$stationID, selected_stations$plaats)

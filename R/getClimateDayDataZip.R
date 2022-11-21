@@ -6,7 +6,7 @@
 #' @details
 #' This function retrieves raw climate data collected by the official KNMI weather stations. It is optimised for
 #' retrieving large sets of data that have been prepared by the KNMI for download. If a year in the past is selected,
-#' the call is forwarded to the function \code{\link{get_climate_data_api}}. The function \code{\link{get_climate_data_api}}
+#' the call is forwarded to the function \code{\link{get_daily_data}}. The function \code{\link{get_daily_data}}
 #' in this package is better suited to retrieve data for very specific date-ranges.
 #'
 #' You can specify a specific station or get data from all the stations at once (the default).
@@ -205,35 +205,46 @@ get_land_data_zip <-
       substr(from, 1, 4) %>%
       as.numeric()
 
-    if (stationID == 'ALL' & fromYear < thisYear) {
-      # no other choice than to use the slower script-based API:
+    if (stationID == 'ALL' & (thisYear - fromYear) > 5) {
+      stop("A download for all stations for a period > 5 years is not permitted by the KNMI API. Suggestion: download the data in batches.")
+
+    } else if (stationID == 'ALL' & (thisYear - fromYear) > 0 & (thisYear - fromYear) <= 5) {
+      # download of prepared zip-file is not possible, use the slower script-based API.
+      # With an additional restriction that a download is restricted to 5 years
+      #   by the KNMI API.
       daily_data <-
         get_daily_data(stationID, from, to)
-
 
     } else {
       # retrieve prepared download-files from the KNMI website
       if(stationID == 'ALL' & fromYear == thisYear) {
         URL <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/jaar.zip"
         file <- "jaar.txt"
+        skiplines <- 58
       } else {
         # retrieve all available data for this specific station:
         URL <- paste0("http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_",stationID,".zip")
         file <- paste0("etmgeg_",stationID,".txt")
+        skiplines <- 51
       }
 
       # download a zip file containing broadband data, save it to the working directory
-      download.file(URL,
-                    destfile = "./temp.zip")
+      tmpdir <- tempdir()
+      tmpfile <- file.path(tmpdir, basename(URL))
+      if (!file.exists(tmpfile))
+        download.file(URL,
+                      destfile = tmpfile,
+                      quiet = TRUE)
       # unzip the file
-      unzip(zipfile = "./temp.zip",
-            exdir = "./temp")
+      unzip(zipfile = tmpfile,
+            exdir = tmpdir)
 
       daily_data <-
-        readr::read_csv(file = paste0("./temp/", file),
+        readr::read_csv(file = tmpfile,
                         col_names = TRUE,
-                        col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
-                        skip = 51) %>%
+                        col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", # 41columns
+                        skip = skiplines,
+                        show_col_types = FALSE) %>%
         dplyr::as_tibble() %>%
         # correct the first column name
         dplyr::rename(STN = '# STN') %>%
@@ -250,7 +261,9 @@ get_sea_data_zip <-
   function(stationID = "ALL",
            from,
            to) {
+
     base_url <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_"
+    tmpdir <- tempdir()
 
     if (stationID == "ALL")
       sea_based_stations <- c(201,
@@ -275,24 +288,31 @@ get_sea_data_zip <-
       URL <- paste0(base_url, sea_based_stations[i], ".zip")
 
       # download a zip file containing broadband data, save it to the working directory
-      download.file(URL,
-                    destfile="./temp.zip")
-
+      tmpfile <- file.path(tmpdir, basename(URL))
+      if (!file.exists(tmpfile))
+        download.file(URL,
+                      destfile = tmpfile,
+                      quiet = TRUE)
       # unzip the file
-      unzip(zipfile="./temp.zip",
-            exdir = "./temp")
+      unzip(zipfile = tmpfile,
+            exdir = tmpdir)
 
           # read the data into R, with "|" seperating values
       file <- paste0("etmgeg_",sea_based_stations[i],".txt") # example: etmgeg_201.txt
+      tmpfile <- file.path(tmpdir, file)
 
       daily_data <-
-        readr::read_csv(file = paste0("./temp/", file),
+        # note: 'New names' warning becasue last column name is missing...
+        readr::read_csv(file = tmpfile,
                         col_names = TRUE,
                         col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
-                        skip = 35) %>%
+                        skip = 35,
+                        show_col_types = FALSE) %>%
         dplyr::as_tibble() %>%
         # correct the first column name
         dplyr::rename(STN = '# STN') %>%
+        # remove strange and empty last column 'without name'
+        dplyr::select(-"...32") %>%
         # return subset based on provided start-/end-date parameters
         dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to)) %>%
         dplyr::bind_rows(daily_data)

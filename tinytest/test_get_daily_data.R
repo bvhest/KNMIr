@@ -14,7 +14,7 @@ library(stringr)
 # **********************************************************************************************************************
 dd <- get_daily_data()
 
-station_count <- 47L
+station_count <- 34L # station count of active stations with temperature sensor (13 are sea-based)
 start_date <-
   lubridate::today() %>%
   lubridate::year(.) %>%
@@ -27,11 +27,15 @@ end_date <-
   as.numeric()
 
 # check default for parameters
-expect_equal(length(unique(dd$STN)), station_count)
-expect_equal(min(dd$YYYYMMDD), start_date)
-expect_equal(max(dd$YYYYMMDD), end_date)
+expect_equal(length(unique(dd$STN)), station_count,
+             info = "test get_daily_data: default parameters I.")
+expect_equal(min(dd$YYYYMMDD), start_date,
+             info = "test get_daily_data: default parameters II.")
+expect_equal(max(dd$YYYYMMDD), end_date,
+             info = "test get_daily_data: default parameters III.")
 # check number of returned columns
-expect_equal(ncol(dd), 41)
+expect_equal(ncol(dd), 41,
+             info = "test get_daily_data: number of columns.")
 
 
 # **********************************************************************************************************************
@@ -47,9 +51,12 @@ start_date <-
   as.numeric()
 dd <- get_daily_data(stationID = 260,
                      from = from)
-expect_equal(length(unique(dd$STN)), station_count)
-expect_equal(min(dd$YYYYMMDD), start_date)
-expect_equal(max(dd$YYYYMMDD), end_date)
+expect_equal(length(unique(dd$STN)), station_count,
+             info = "test get_daily_data: single station.")
+expect_equal(min(dd$YYYYMMDD), start_date,
+             info = "test get_daily_data: single station, given start-year")
+expect_equal(max(dd$YYYYMMDD), end_date,
+             info = "test get_daily_data: single station, default end-date.")
 
 
 # **********************************************************************************************************************
@@ -64,9 +71,12 @@ start_date <-
   as.numeric()
 dd <- get_daily_data(stationID = 260,
                      from = from)
-expect_equal(length(unique(dd$STN)), station_count)
-expect_equal(min(dd$YYYYMMDD), start_date)
-expect_equal(max(dd$YYYYMMDD), end_date)
+expect_equal(length(unique(dd$STN)), station_count,
+             info = "test get_daily_data: single station.")
+expect_equal(min(dd$YYYYMMDD), start_date,
+             info = "test get_daily_data: single station, given start-year-month")
+expect_equal(max(dd$YYYYMMDD), end_date,
+             info = "test get_daily_data: single station, default end-date.")
 
 
 # **********************************************************************************************************************
@@ -89,9 +99,12 @@ to_date <-
 dd <- get_daily_data(stationID = 260,
                      from = from,
                      to = to)
-expect_equal(length(unique(dd$STN)), station_count)
-expect_equal(min(dd$YYYYMMDD), start_date)
-expect_equal(max(dd$YYYYMMDD), end_date)
+expect_equal(length(unique(dd$STN)), station_count,
+             info = "test get_daily_data: single station.")
+expect_equal(min(dd$YYYYMMDD), start_date,
+             info = "test get_daily_data: single station, given start-date")
+expect_equal(max(dd$YYYYMMDD), end_date,
+             info = "test get_daily_data: single station, given end-date.")
 
 
 # **********************************************************************************************************************
@@ -100,9 +113,11 @@ expect_equal(max(dd$YYYYMMDD), end_date)
 dd_dep <- get_climate_day_data_api(stationID = 260,
                                    from = from,
                                    to = to)
-expect_equal(dd, dd_dep)
+expect_equal(dd, dd_dep,
+             info = "test deprecated functions I.")
 
 dd_dep <- get_climate_data_api(stationID = 260,
                                from = from,
                                to = to)
-expect_equal(dd, dd_dep)
+expect_equal(dd, dd_dep,
+             info = "test deprecated functions II.")

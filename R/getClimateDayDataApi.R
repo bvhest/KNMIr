@@ -5,7 +5,7 @@
 #'
 #' @details
 #' This function retrieves raw climate data collected by the official KNMI measurement stations for a specific station
-#' and/or date-range. It uses the, somewhat slower, KNMI-API to collect the data.
+#' and/or date-range. It uses the, somewhat slower, KNMI query-API to collect the data.
 #' The function \code{\link{get_daily_data_from_prepared_zip}} in this package is optimized to collect data for larger
 #' date-ranges (e.g. for > 10 years), but is less flexible with combinations of all or specific stations and date ranges.
 #'
@@ -18,7 +18,8 @@
 #' Note: this function only works for the land-based measurement stations, so not for the stations in the North Sea, as
 #'       the API does not expose these.
 #'
-#' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
+#' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "ALL".
+#'   Note: a collection of numbers in the range of stations$stationID.
 #' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd', 'yyyymm' or 'yyyy'. Missing digits are replaced with the first day of the month and/or the first month of the year.
 #' @param to enddate for the time-window. Defaults to yesterday (most recent data provided by the KNMI). A string of characters in the format 'yyyymmdd', 'yyyymm' or 'yyyy'. Missing digits are replaced with the last day of the month and/or the last month of the year.
 #' @return a tibble.
@@ -123,7 +124,7 @@ get_daily_data <-
     URL <- paste0(baseURL, "?start=", from_date, "&end=", to_date, "&stns=", stationID,"&", params)
 
     data_daily <-
-      readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
+      readr::read_csv(URL, col_names = FALSE, comment = "#", show_col_types = FALSE) %>%
       dplyr::as_tibble()
 
     colnames(data_daily) <-
@@ -151,7 +152,8 @@ get_daily_data <-
 #' @details
 #' Depricated function. Please use '\code{get_daily_data}' instead.
 #'
-#' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "all". . Note: a string of characters in the format 'iii'.
+#' @param stationID ID for the KNMI measurement station. The available stations can be retrieved with the function 'getStations()'. Defaults to "ALL".
+#'   Note: a collection of numbers in the range of stations$stationID.
 #' @param from startdate for the time-window. Defaults to start of current year. A string of characters in the format 'yyyymmdd'.
 #' @param to enddate for the time-window. Defaults to yesterday. A string of characters in the format 'yyyymmdd'.
 #' @return a tibble.

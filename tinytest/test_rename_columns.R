@@ -76,7 +76,7 @@ dd_renamed <-
   rename_KNMI_column_names(dd)
 
 expect_true(all(colnames(dd_renamed) %in% describing_column_names),
-            info = "test renaming of all 41 columns from sea-based stations")
+            info = "test renaming of all 32 columns from sea-based stations")
 
 
 # **********************************************************************************************************************
