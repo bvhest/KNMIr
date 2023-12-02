@@ -2,8 +2,8 @@ Package: KNMIr
 Author: Bart van Hest
 Maintainer: Bart van Hest <hestbv@gmail.com>
 Title: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI
-Version: 0.4.1.0
-Date: 2022-11-14
+Version: 0.4.2.0
+Date: 2023-11-02
 Type: Package
 Authors@R: c( person("Bart", "van Hest", 
                      email = "hestbv@gmail.com",
@@ -40,4 +40,4 @@ Suggests: knitr,
     tinytest
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3

@@ -32,15 +32,15 @@ add_degree_days <- function(data,
       stop("This function needs three mandatory columns; stationID, doy (day-of-the-year) and gemTemp (the daily mean temperature).")
 
    # wanneer afwezig; voeg de jaar-kolom toe:
-   if (!("year" %in% names(data))) {
-      data$year <- format(Sys.Date(), format="%Y")
+   if (!("jaar" %in% names(data))) {
+      data$jaar <- format(Sys.Date(), format="%Y")
    }
 
    if (dggType == "Huglin") {
       # bereken Huglin-index:
       HUI <- calculate_Huglin_index(data, startDate = startDate, endDate = endDate)
       # voeg berekende waarden toe aan originele data-frame:
-      data <- merge(data, HUI, by = c("stationID", "year", "doy"), all.x = TRUE)
+      data <- merge(data, HUI, by = c("stationID", "jaar", "doy"), all.x = TRUE)
    } else if (dggType == "VE") {
       # bereken VE-index:
       VEI <- calculate_VE_index(data, startDate = startDate, endDate = endDate)
@@ -94,18 +94,20 @@ calculate_Huglin_index <- function(dgg,
 #   attach(dgg); on.exit(detach(name = dgg))
 
    # convert to day-of-year:
-   doyStart <- data.table::yday(startDate)
-   doyEnd <- data.table::yday(endDate)
+   doyStart <- lubridate::yday(startDate)
+   doyEnd <- lubridate:::yday(endDate)
 
    # subset op basis van de start en eind datum:
-   range <- dgg[dgg$doy >= doyStart && dgg$doy <= doyEnd,]
+   range <- dgg[dgg$doy >= doyStart & dgg$doy <= doyEnd,]
+
    # bereken de dagwaarde:
    range$HuglinIndex <- 1.06 * pmax((((range$gemTemp + range$maxTemp) / 2) - 10), 0)
+
    # bereken nu de cumulatieve HuglinIndex:
-   range <- plyr::ddply(range, .(stationID, year), transform, somHuglinIndex = cumsum(HuglinIndex))
+   range <- plyr::ddply(range, .(stationID, jaar), transform, somHuglinIndex = cumsum(HuglinIndex))
 
 #   detach(name = dgg)
-   return(range[,c("stationID", "year", "doy", "somHuglinIndex")])
+   return(range[,c("stationID", "jaar", "doy", "somHuglinIndex")])
 }
 
 #' @title calculate the VE-index.
@@ -158,8 +160,8 @@ calculate_VE_index <- function(dgg,
    # bereken de dagwaarde:
    range$VEIndex <- pmax((range$gemTemp - 10), 0)
    # bereken nu de cumulatieve HuglinIndex:
-   range <- plyr::ddply(range, .(stationID, year), transform, somVEIndex = cumsum(VEIndex))
+   range <- plyr::ddply(range, .(stationID, jaar), transform, somVEIndex = cumsum(VEIndex))
 
 #   detach(name = dgg)
-   return(range[,c("stationID", "year", "doy", "somVEIndex")])
+   return(range[,c("stationID", "jaar", "doy", "somVEIndex")])
 }
