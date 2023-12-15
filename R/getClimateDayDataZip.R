@@ -246,8 +246,10 @@ get_land_data_zip <-
                         skip = skiplines,
                         show_col_types = FALSE) %>%
         dplyr::as_tibble() %>%
-        # correct the first column name
-        dplyr::rename(STN = '# STN') %>%
+        # correct the first column name (if the name contains '#')
+        # inspired by https://stackoverflow.com/questions/43578723/conditional-replacement-of-column-name-in-tibble-using-dplyr
+        #dplyr::rename(STN = '# STN') %>%
+        rename_all(~sub('# STN', 'STN', .x)) %>%
         # return subset based on provided start-/end-date parameters
         dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to))
 
@@ -309,10 +311,14 @@ get_sea_data_zip <-
                         skip = 35,
                         show_col_types = FALSE) %>%
         dplyr::as_tibble() %>%
-        # correct the first column name
-        dplyr::rename(STN = '# STN') %>%
+        # correct the first column name (if the name contains '#')
+        # inspired by https://stackoverflow.com/questions/43578723/conditional-replacement-of-column-name-in-tibble-using-dplyr
+        #dplyr::rename(STN = '# STN') %>%
+        rename_all(~sub('# STN', 'STN', .x)) %>%
         # remove strange and empty last column 'without name'
-        dplyr::select(-"...32") %>%
+        # inspired by https://stackoverflow.com/questions/67346417/how-to-drop-columns-with-column-names-that-contain-specific-string
+        # dplyr::select(-"...32") %>%
+        dplyr::select(-contains("32")) %>%
         # return subset based on provided start-/end-date parameters
         dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to)) %>%
         dplyr::bind_rows(daily_data)
