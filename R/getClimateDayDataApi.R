@@ -73,18 +73,19 @@ get_daily_data <-
   function(stationID = "ALL",
            from,
            to) {
-
     # try to parse date-parameters
-    if (missing(from))
+    if (missing(from)) {
       from <-
         lubridate::today() %>%
         lubridate::year(.) %>%
         stringr::str_glue(., "0101")
-    if (missing(to))
+    }
+    if (missing(to)) {
       to <-
         (lubridate::today() - 1) %>% # yesterday
         as.character() %>%
         stringr::str_remove_all(., pattern = "-")
+    }
 
     if (!is.character(from) | !is.character(to) | stringr::str_length(from) %% 2 == 1 | stringr::str_length(to) %% 2 == 1) {
       stop("The values for 'from' and 'to' must be a string with a value that describes the date in the format 'YYYY', 'YYYYMM' or 'YYYYMMDD'.")
@@ -100,10 +101,11 @@ get_daily_data <-
       if (stringr::str_length(to) == 8) {
         to_date <- to
       } else {
-        if (stringr::str_length(to) == 6)
+        if (stringr::str_length(to) == 6) {
           to <- paste0(to, "01")
-        else if (stringr::str_length(to) == 4)
+        } else if (stringr::str_length(to) == 4) {
           to <- paste0(to, "1231")
+        }
 
         to_date <-
           lubridate::ymd(to) %>%
@@ -114,23 +116,26 @@ get_daily_data <-
           stringr::str_remove_all(., pattern = "-")
       }
     }
-    if (as.numeric(to_date) < as.numeric(from_date))
+    if (as.numeric(to_date) < as.numeric(from_date)) {
       stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
+    }
 
     # TODO: undone  !! (2022-04-01)
-#    baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
+    #    baseURL <- "http://projects.knmi.nl/klimatologie/daggegevens/getdata_dag.cgi"
     baseURL <- "https://www.daggegevens.knmi.nl/klimatologie/daggegevens"
     params <- "ALL"
-    URL <- paste0(baseURL, "?start=", from_date, "&end=", to_date, "&stns=", stationID,"&", params)
+    URL <- paste0(baseURL, "?start=", from_date, "&end=", to_date, "&stns=", stationID, "&", params)
 
     data_daily <-
       readr::read_csv(URL, col_names = FALSE, comment = "#", show_col_types = FALSE) %>%
       dplyr::as_tibble()
 
     colnames(data_daily) <-
-      c("STN","YYYYMMDD","DDVEC","FHVEC","FG","FHX","FHXH","FHN","FHNH","FXX","FXXH","TG","TN","TNH","TX","TXH","T10N",
-        "T10NH","SQ","SP","Q","DR","RH","RHX","RHXH","EV24","PG","PX","PXH","PN","PNH","VVN","VVNH","VVX","VVXH","NG",
-        "UG","UX","UXH","UN","UNH")
+      c(
+        "STN", "YYYYMMDD", "DDVEC", "FHVEC", "FG", "FHX", "FHXH", "FHN", "FHNH", "FXX", "FXXH", "TG", "TN", "TNH", "TX", "TXH", "T10N",
+        "T10NH", "SQ", "SP", "Q", "DR", "RH", "RHX", "RHXH", "EV24", "PG", "PX", "PXH", "PN", "PNH", "VVN", "VVNH", "VVX", "VVXH", "NG",
+        "UG", "UX", "UXH", "UN", "UNH"
+      )
 
     data_daily <-
       data_daily %>%
@@ -162,8 +167,7 @@ get_daily_data <-
 get_climate_day_data_api <-
   function(stationID = "ALL",
            from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
-           to = format(Sys.Date()-1, format = "%Y%m%d")) {
-
+           to = format(Sys.Date() - 1, format = "%Y%m%d")) {
     print("Depricated function. Please use 'get_daily_data' instead.")
 
     data_daily <- get_daily_data(stationID, from, to)
@@ -188,8 +192,7 @@ get_climate_day_data_api <-
 get_climate_data_api <-
   function(stationID = "ALL",
            from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
-           to = format(Sys.Date()-1, format = "%Y%m%d")) {
-
+           to = format(Sys.Date() - 1, format = "%Y%m%d")) {
     print("Depricated function. Please use 'get_daily_data' instead.")
 
     data_daily <- get_daily_data(stationID, from, to)

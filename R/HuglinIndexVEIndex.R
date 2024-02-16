@@ -22,32 +22,33 @@
 #'
 add_degree_days <- function(data,
                             dggType = "Huglin",
-                            startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
-                            endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
+                            startDate = paste(format(Sys.Date(), format = "%Y"), "01-01", sep = "-"),
+                            endDate = paste(format(Sys.Date(), format = "%Y"), "12-31", sep = "-")) {
+  # stop deze functie als de kolommen nog niet zijn hernoemd.
+  if (!("stationID" %in% names(data))) {
+    stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
+  }
+  if (!("stationID" %in% names(data) & "doy" %in% names(data) & "gemTemp" %in% names(data))) {
+    stop("This function needs three mandatory columns; stationID, doy (day-of-the-year) and gemTemp (the daily mean temperature).")
+  }
 
-   # stop deze functie als de kolommen nog niet zijn hernoemd.
-   if (!("stationID" %in% names(data)))
-      stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
-   if (!("stationID" %in% names(data) & "doy" %in% names(data) & "gemTemp" %in% names(data)))
-      stop("This function needs three mandatory columns; stationID, doy (day-of-the-year) and gemTemp (the daily mean temperature).")
+  # wanneer afwezig; voeg de jaar-kolom toe:
+  if (!("jaar" %in% names(data))) {
+    data$jaar <- format(Sys.Date(), format = "%Y")
+  }
 
-   # wanneer afwezig; voeg de jaar-kolom toe:
-   if (!("jaar" %in% names(data))) {
-      data$jaar <- format(Sys.Date(), format="%Y")
-   }
-
-   if (dggType == "Huglin") {
-      # bereken Huglin-index:
-      HUI <- calculate_Huglin_index(data, startDate = startDate, endDate = endDate)
-      # voeg berekende waarden toe aan originele data-frame:
-      data <- merge(data, HUI, by = c("stationID", "jaar", "doy"), all.x = TRUE)
-   } else if (dggType == "VE") {
-      # bereken VE-index:
-      VEI <- calculate_VE_index(data, startDate = startDate, endDate = endDate)
-      # voeg berekende waarden toe aan originele data-frame:
-      data <- merge(data, VEI, by = c("stationID", "year", "doy"), all.x = TRUE)
-   }
-   return(data)
+  if (dggType == "Huglin") {
+    # bereken Huglin-index:
+    HUI <- calculate_Huglin_index(data, startDate = startDate, endDate = endDate)
+    # voeg berekende waarden toe aan originele data-frame:
+    data <- merge(data, HUI, by = c("stationID", "jaar", "doy"), all.x = TRUE)
+  } else if (dggType == "VE") {
+    # bereken VE-index:
+    VEI <- calculate_VE_index(data, startDate = startDate, endDate = endDate)
+    # voeg berekende waarden toe aan originele data-frame:
+    data <- merge(data, VEI, by = c("stationID", "year", "doy"), all.x = TRUE)
+  }
+  return(data)
 }
 
 #' @title calculate the Huglin-index.
@@ -84,30 +85,30 @@ add_degree_days <- function(data,
 #' @export
 
 calculate_Huglin_index <- function(dgg,
-                                   startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
-                                   endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
+                                   startDate = paste(format(Sys.Date(), format = "%Y"), "01-01", sep = "-"),
+                                   endDate = paste(format(Sys.Date(), format = "%Y"), "12-31", sep = "-")) {
+  # stop deze functie als de kolommen nog niet zijn hernoemd.
+  if (!("stationID" %in% names(dgg))) {
+    stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
+  }
 
-   # stop deze functie als de kolommen nog niet zijn hernoemd.
-   if (!("stationID" %in% names(dgg)))
-      stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
+  #   attach(dgg); on.exit(detach(name = dgg))
 
-#   attach(dgg); on.exit(detach(name = dgg))
+  # convert to day-of-year:
+  doyStart <- lubridate::yday(startDate)
+  doyEnd <- lubridate:::yday(endDate)
 
-   # convert to day-of-year:
-   doyStart <- lubridate::yday(startDate)
-   doyEnd <- lubridate:::yday(endDate)
+  # subset op basis van de start en eind datum:
+  range <- dgg[dgg$doy >= doyStart & dgg$doy <= doyEnd, ]
 
-   # subset op basis van de start en eind datum:
-   range <- dgg[dgg$doy >= doyStart & dgg$doy <= doyEnd,]
+  # bereken de dagwaarde:
+  range$HuglinIndex <- 1.06 * pmax((((range$gemTemp + range$maxTemp) / 2) - 10), 0)
 
-   # bereken de dagwaarde:
-   range$HuglinIndex <- 1.06 * pmax((((range$gemTemp + range$maxTemp) / 2) - 10), 0)
+  # bereken nu de cumulatieve HuglinIndex:
+  range <- plyr::ddply(range, .(stationID, jaar), transform, somHuglinIndex = cumsum(HuglinIndex))
 
-   # bereken nu de cumulatieve HuglinIndex:
-   range <- plyr::ddply(range, .(stationID, jaar), transform, somHuglinIndex = cumsum(HuglinIndex))
-
-#   detach(name = dgg)
-   return(range[,c("stationID", "jaar", "doy", "somHuglinIndex")])
+  #   detach(name = dgg)
+  return(range[, c("stationID", "jaar", "doy", "somHuglinIndex")])
 }
 
 #' @title calculate the VE-index.
@@ -142,26 +143,26 @@ calculate_Huglin_index <- function(dgg,
 #' @export
 
 calculate_VE_index <- function(dgg,
-                               startDate = paste(format(Sys.Date(), format="%Y"), "01-01", sep="-"),
-                               endDate = paste(format(Sys.Date(), format="%Y"), "12-31", sep="-")) {
+                               startDate = paste(format(Sys.Date(), format = "%Y"), "01-01", sep = "-"),
+                               endDate = paste(format(Sys.Date(), format = "%Y"), "12-31", sep = "-")) {
+  # stop deze functie als de kolommen nog niet zijn hernoemd.
+  if (!("stationID" %in% names(dgg))) {
+    stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
+  }
 
-   # stop deze functie als de kolommen nog niet zijn hernoemd.
-   if (!("stationID" %in% names(dgg)))
-      stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
+  #   attach(dgg); on.exit(detach(name = dgg))
 
-#   attach(dgg); on.exit(detach(name = dgg))
+  # convert to day-of-year:
+  doyStart <- data.table::yday(startDate)
+  doyEnd <- data.table::yday(endDate)
 
-   # convert to day-of-year:
-   doyStart <- data.table::yday(startDate)
-   doyEnd <- data.table::yday(endDate)
+  # subset op basis van de start en eind datum:
+  range <- dgg[dgg$doy >= doyStart && dgg$doy <= doyEnd, ]
+  # bereken de dagwaarde:
+  range$VEIndex <- pmax((range$gemTemp - 10), 0)
+  # bereken nu de cumulatieve HuglinIndex:
+  range <- plyr::ddply(range, .(stationID, jaar), transform, somVEIndex = cumsum(VEIndex))
 
-   # subset op basis van de start en eind datum:
-   range <- dgg[dgg$doy >= doyStart && dgg$doy <= doyEnd,]
-   # bereken de dagwaarde:
-   range$VEIndex <- pmax((range$gemTemp - 10), 0)
-   # bereken nu de cumulatieve HuglinIndex:
-   range <- plyr::ddply(range, .(stationID, jaar), transform, somVEIndex = cumsum(VEIndex))
-
-#   detach(name = dgg)
-   return(range[,c("stationID", "jaar", "doy", "somVEIndex")])
+  #   detach(name = dgg)
+  return(range[, c("stationID", "jaar", "doy", "somVEIndex")])
 }

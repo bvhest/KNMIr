@@ -50,76 +50,79 @@ get_hourly_data <-
   function(stationID = "260",
            from,
            to) {
-
     stop("Sorry, this function is temporarily unavailable as the KNMI changed their API.")
 
     # try to parse date-parameters
-    if (missing(from))
+    if (missing(from)) {
       from <-
         (lubridate::today() - 7) %>% # one week ago
         as.character() %>%
         stringr::str_remove_all(pattern = "-") %>%
         stringr::str_glue(., "01")
-    if (missing(to))
+    }
+    if (missing(to)) {
       to <-
         (lubridate::today() - 1) %>% # yesterday
         as.character() %>%
         stringr::str_remove_all(pattern = "-") %>%
         stringr::str_glue(., "24")
+    }
 
     if (!is.character(from) | !is.character(to) | stringr::str_length(from) %% 2 == 1 | stringr::str_length(to) %% 2 == 1) {
       stop("The values for 'from' and 'to' must be a string with a value that describes the date in the format 'YYYY', 'YYYYMM', 'YYYYMMDD' or 'YYYYMMDDHH'.")
     } else {
-        if (stringr::str_length(from) == 8) {
-          from_date <- paste0(from, "01")
-        } else if (stringr::str_length(from) == 6) {
-          from_date <- paste0(from, "0101")
-        } else if (stringr::str_length(from) == 4) {
-          from_date <- paste0(from, "010101")
-        } else {
-          from_date <- from
+      if (stringr::str_length(from) == 8) {
+        from_date <- paste0(from, "01")
+      } else if (stringr::str_length(from) == 6) {
+        from_date <- paste0(from, "0101")
+      } else if (stringr::str_length(from) == 4) {
+        from_date <- paste0(from, "010101")
+      } else {
+        from_date <- from
+      }
+
+      if (stringr::str_length(to) == 10) {
+        to_date <- to
+      } else {
+        if (stringr::str_length(to) == 6) {
+          to <- paste0(to, "01")
+        } else if (stringr::str_length(to) == 4) {
+          to <- paste0(to, "1231")
         }
 
-        if (stringr::str_length(to) == 10)
-          to_date <- to
-        else {
-          if (stringr::str_length(to) == 6)
-            to <- paste0(to, "01")
-          else if (stringr::str_length(to) == 4)
-            to <- paste0(to, "1231")
-
-          to_date <-
-            lubridate::ymd(to) %>%
-            lubridate::ceiling_date(unit = "month") - 1
-          to_date <-
-            to_date %>%
-            as.character() %>%
-            stringr::str_remove_all(pattern = "-") %>%
-            paste0(., "24")
-        }
+        to_date <-
+          lubridate::ymd(to) %>%
+          lubridate::ceiling_date(unit = "month") - 1
+        to_date <-
+          to_date %>%
+          as.character() %>%
+          stringr::str_remove_all(pattern = "-") %>%
+          paste0(., "24")
+      }
     }
-    if (as.numeric(to) < as.numeric(from))
+    if (as.numeric(to) < as.numeric(from)) {
       stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
+    }
 
     #
     # ToDo: download data from https://www.daggegevens.knmi.nl/klimatologie/uurgegevens
     #
-   baseURL <- "http://projects.knmi.nl/klimatologie/uurgegevens/getdata_uur.cgi"
-   params <- "ALL"
-   URL <- paste(baseURL, "?start=", from, "&end=", to, "&stns=", stationID,"&", params, sep = "")
+    baseURL <- "http://projects.knmi.nl/klimatologie/uurgegevens/getdata_uur.cgi"
+    params <- "ALL"
+    URL <- paste(baseURL, "?start=", from, "&end=", to, "&stns=", stationID, "&", params, sep = "")
 
-   hourly_data <-
-     readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
-     dplyr::as_tibble()
+    hourly_data <-
+      readr::read_csv(URL, col_names = FALSE, comment = "#") %>%
+      dplyr::as_tibble()
 
-   column_names <-
+    column_names <-
       c("STN", "YYYYMMDD", "HH", "DD", "FH", "FF", "FX", "T", "T10N", "TD", "SQ", "Q", "DR", "RH", "P", "VV", "N", "U", "WW", "IX", "M", "R", "S", "O", "Y")
 
-   colnames(hourly_data) <-
+    colnames(hourly_data) <-
       column_names
 
-   return(hourly_data)
-}
+    return(hourly_data)
+  }
 
 
 
@@ -141,11 +144,10 @@ get_hourly_data <-
 get_climate_hour_data_api <-
   function(stationID = "ALL",
            from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
-           to = format(Sys.Date()-1, format = "%Y%m%d")) {
-
+           to = format(Sys.Date() - 1, format = "%Y%m%d")) {
     print("Depricated function. Please use 'get_hourly_data' instead.")
 
     hourly_data <- get_hourly_data(stationID, from, to)
 
     return(hourly_data)
-}
+  }

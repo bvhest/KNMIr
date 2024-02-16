@@ -21,14 +21,16 @@ find_nearest_KNMI_station <-
   function(lat, lon,
            active = TRUE,
            temperature_sensor = TRUE) {
-
     # perform some sanity checks on the input
-    if(length(lat) > 1 | length(lon) > 1)
+    if (length(lat) > 1 | length(lon) > 1) {
       stop("The values for 'lon' and 'lat' must contain a single location/value.")
-    if(!(is.numeric(lat) && is.numeric(lon)))
+    }
+    if (!(is.numeric(lat) && is.numeric(lon))) {
       stop("The values for 'lon' and 'lat' must contain numerical values.")
-    if(abs(lat) > 90 || abs(lon) > 180)
+    }
+    if (abs(lat) > 90 || abs(lon) > 180) {
       stop("The latitude must be between -90 and 90, the longitude between -180 and 180.")
+    }
 
     # store lat/lon into dataframe
     location <-
@@ -81,15 +83,19 @@ find_nearest_KNMI_station2 <-
   function(location,
            active = TRUE,
            temperature_sensor = TRUE) {
-
     # perform some sanity checks
-    if(nrow(location) > 1)
+    if (nrow(location) > 1) {
       stop("The location-parameter must contain a single location, not ", length(location), " locations.")
-    if(!(is.numeric(location$lat) && is.numeric(location$lon)))
+    }
+    if (!(is.numeric(location$lat) && is.numeric(location$lon))) {
       stop("The values for 'lon' and 'lat' must contain numerical values.")
-    if(abs(location$lat) > 90 || abs(location$lon) > 180)
+    }
+    if (abs(location$lat) > 90 || abs(location$lon) > 180) {
       stop("The latitude must be between -90 and 90, the longitude between -180 and 180.")
+    }
 
-    return(find_nearest_KNMI_station(location$lat, location$lon,
-                                     active, temperature_sensor))
+    return(find_nearest_KNMI_station(
+      location$lat, location$lon,
+      active, temperature_sensor
+    ))
   }

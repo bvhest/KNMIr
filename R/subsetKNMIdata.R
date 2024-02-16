@@ -41,8 +41,7 @@
 subset_data <-
   function(data,
            startyear = 1901,
-           variables = c("FG","TG","TN","TX","SQ","SP","Q","RH","NG")) {
-
+           variables = c("FG", "TG", "TN", "TX", "SQ", "SP", "Q", "RH", "NG")) {
     # ToDO: check params
     start_date <- lubridate::ymd(paste0(startyear, "0101"))
 
@@ -53,11 +52,11 @@ subset_data <-
       # subset on required years
       dplyr::filter(date >= start_date) # [data$date >= start_date, ]
 
-#    data <- tidy_data(data)
+    #    data <- tidy_data(data)
 
     # subset on required variables
     variables <-
-      c(c("STN","YYYYMMDD", "date", "doy", "year", "month", "week", "day"), variables)
+      c(c("STN", "YYYYMMDD", "date", "doy", "year", "month", "week", "day"), variables)
     data <-
       data[, variables]
 
@@ -95,8 +94,7 @@ subset_data <-
 subset_KNMI_data <-
   function(data,
            startyear = 2006,
-           variables = c("FG","TG","TN","TX","SQ","SP","Q","RH","NG")) {
-
+           variables = c("FG", "TG", "TN", "TX", "SQ", "SP", "Q", "RH", "NG")) {
     print("Depricated function. Please use 'subset_data' instead.")
 
     return(subset_data(data))

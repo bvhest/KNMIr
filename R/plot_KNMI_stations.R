@@ -17,7 +17,6 @@
 plot_stations <-
   function(active = TRUE,
            temperature_sensor = TRUE) {
-
     utils::data(stations)
     utils::data(map_Netherlands)
 
@@ -31,16 +30,20 @@ plot_stations <-
 
     p <-
       ggmap::ggmap(map.nl) +
-      ggplot2::geom_point(mapping = ggplot2::aes(x = lon, y = lat, color = !is.na(einddatum)),
-                          size = 3,
-                          data = selected_stations,
-                          alpha = 1,
-                          na.rm = TRUE,
-                          show.legend = FALSE) +
-      ggplot2::geom_label(data = selected_stations,
-                          ggplot2::aes(x = lon, y = lat, label = text),
-                          size = 3,
-                          vjust = +0.02,
-                          hjust = 0)
+      ggplot2::geom_point(
+        mapping = ggplot2::aes(x = lon, y = lat, color = !is.na(einddatum)),
+        size = 3,
+        data = selected_stations,
+        alpha = 1,
+        na.rm = TRUE,
+        show.legend = FALSE
+      ) +
+      ggplot2::geom_label(
+        data = selected_stations,
+        ggplot2::aes(x = lon, y = lat, label = text),
+        size = 3,
+        vjust = +0.02,
+        hjust = 0
+      )
     print(p)
   }

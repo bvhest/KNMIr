@@ -13,8 +13,7 @@
 #' @examples
 #' date2day_of_year(as.Date("2015-01-01")) # expected value: 1
 #' date2day_of_year(as.Date("2015-12-31")) # expected value: 365
-
-date2day_of_year <- function(datum){
-   d <- as.Date(datum)
-   strptime(datum, "%d/%m/%Y")$yday+1
+date2day_of_year <- function(datum) {
+  d <- as.Date(datum)
+  strptime(datum, "%d/%m/%Y")$yday + 1
 }

@@ -76,23 +76,25 @@ get_daily_data_from_prepared_zip <-
            from,
            to,
            station_type = "land") {
-
     # validate-parameters
     # ToDo: check if station code is valid, else issue error message.
-    if (!(station_type %in% c("land", "sea", "both")))
+    if (!(station_type %in% c("land", "sea", "both"))) {
       stop("The station_type must be one of 'land', 'sea' or 'both'.")
+    }
 
     # try to parse date-parameters
-    if (missing(from))
+    if (missing(from)) {
       from <-
         lubridate::today() %>%
         lubridate::year() %>%
         stringr::str_glue(., "0101")
-    if (missing(to))
+    }
+    if (missing(to)) {
       to <-
         (lubridate::today() - 1) %>% # yesterday
         as.character() %>%
         stringr::str_remove_all(pattern = "-")
+    }
 
     if (!is.character(from) | !is.character(to) | stringr::str_length(from) %% 2 == 1 | stringr::str_length(to) %% 2 == 1) {
       stop("The values for 'from' and 'to' must be a string with a value that describes the date in the format 'YYYY', 'YYYYMM' or 'YYYYMMDD'.")
@@ -108,10 +110,11 @@ get_daily_data_from_prepared_zip <-
       if (stringr::str_length(to) == 8) {
         to_date <- to
       } else {
-        if (stringr::str_length(to) == 6)
+        if (stringr::str_length(to) == 6) {
           to <- paste0(to, "01")
-        else if (stringr::str_length(to) == 4)
+        } else if (stringr::str_length(to) == 4) {
           to <- paste0(to, "1231")
+        }
 
         to_date <-
           lubridate::ymd(to) %>%
@@ -122,10 +125,11 @@ get_daily_data_from_prepared_zip <-
           stringr::str_remove_all(pattern = "-")
       }
     }
-    if (as.numeric(to_date) < as.numeric(from_date))
+    if (as.numeric(to_date) < as.numeric(from_date)) {
       stop("The values for 'from' and 'to' could not be parsed into dates where 'from' <= 'to'.")
+    }
 
-    if(station_type == "land") {
+    if (station_type == "land") {
       daily_data <-
         get_land_data_zip(stationID, from_date, to_date)
     } else if (station_type == "sea") {
@@ -143,7 +147,6 @@ get_daily_data_from_prepared_zip <-
         land_data %>%
         dplyr::select(colnames(sea_data)) %>%
         dplyr::bind_rows(sea_data)
-
     }
     return(daily_data)
   }
@@ -167,16 +170,16 @@ get_daily_data_from_prepared_zip <-
 #' @export
 #'
 get_climate_data_zip <- function(stationID = "ALL",
-                                 from = paste(format(Sys.Date(), format="%Y"), "0101", sep=""),
-                                 to = format(Sys.Date()-1, format="%Y%m%d"),
+                                 from = paste(format(Sys.Date(), format = "%Y"), "0101", sep = ""),
+                                 to = format(Sys.Date() - 1, format = "%Y%m%d"),
                                  return_only_land = TRUE) {
-
   print("Depricated function. Please use 'get_daily_data_from_prepared_zip' instead.")
 
-  if (return_only_land)
-    station_type = "land"
-  else
-    station_type = "both"
+  if (return_only_land) {
+    station_type <- "land"
+  } else {
+    station_type <- "both"
+  }
 
   data_daily <- get_daily_data_from_prepared_zip(stationID, from, to, station_type)
 
@@ -191,68 +194,70 @@ get_climate_data_zip <- function(stationID = "ALL",
 #
 # **********************************************************************************************************************
 
-# ophalen (prepared zip-file) data for the sea-based KNMI stations
+# ophalen (prepared zip-file) data for the land-based KNMI stations
 get_land_data_zip <-
   function(stationID,
            from,
            to) {
-
     # check if the zip-API can be used:
     thisYear <-
-      format(Sys.Date(), format="%Y") %>%
+      format(Sys.Date(), format = "%Y") %>%
       as.numeric()
     fromYear <-
       substr(from, 1, 4) %>%
       as.numeric()
 
-    if (stationID == 'ALL' & (thisYear - fromYear) > 5) {
+    if (stationID == "ALL" & (thisYear - fromYear) > 5) {
       stop("A download for all stations for a period > 5 years is not permitted by the KNMI API. Suggestion: download the data in batches.")
-
-    } else if (stationID == 'ALL' & (thisYear - fromYear) > 0 & (thisYear - fromYear) <= 5) {
+    } else if (stationID == "ALL" & (thisYear - fromYear) > 0 & (thisYear - fromYear) <= 5) {
       # download of prepared zip-file is not possible, use the slower script-based API.
       # With an additional restriction that a download is restricted to 5 years
       #   by the KNMI API.
       daily_data <-
         get_daily_data(stationID, from, to)
-
     } else {
       # retrieve prepared download-files from the KNMI website
-      if(stationID == 'ALL' & fromYear == thisYear) {
+      if (stationID == "ALL" & fromYear == thisYear) {
         URL <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/jaar.zip"
         file <- "jaar.txt"
         skiplines <- 58
       } else {
         # retrieve all available data for this specific station:
-        URL <- paste0("http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_",stationID,".zip")
-        file <- paste0("etmgeg_",stationID,".txt")
+        URL <- paste0("http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_", stationID, ".zip")
+        file <- paste0("etmgeg_", stationID, ".txt")
         skiplines <- 51
       }
 
       # download a zip file containing broadband data, save it to the working directory
       tmpdir <- tempdir()
       tmpfile <- file.path(tmpdir, basename(URL))
-      if (!file.exists(tmpfile))
+      if (!file.exists(tmpfile)) {
         download.file(URL,
-                      destfile = tmpfile,
-                      quiet = TRUE)
+          destfile = tmpfile,
+          quiet = TRUE
+        )
+      }
       # unzip the file
-      unzip(zipfile = tmpfile,
-            exdir = tmpdir)
+      unzip(
+        zipfile = tmpfile,
+        exdir = tmpdir
+      )
 
       daily_data <-
-        readr::read_csv(file = tmpfile,
-                        col_names = TRUE,
-                        col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", # 41columns
-                        skip = skiplines,
-                        show_col_types = FALSE) %>%
+        readr::read_csv(
+          file = tmpfile,
+          col_names = TRUE,
+          col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii", # 41columns
+          skip = skiplines,
+          show_col_types = FALSE
+        ) %>%
         dplyr::as_tibble() %>%
         # correct the first column name (if the name contains '#')
         # inspired by https://stackoverflow.com/questions/43578723/conditional-replacement-of-column-name-in-tibble-using-dplyr
-        #dplyr::rename(STN = '# STN') %>%
-        rename_all(~sub('# STN', 'STN', .x)) %>%
+        # dplyr::rename(STN = '# STN') %>%
+        rename_all(~ sub("# STN", "STN", .x)) %>%
         # return subset based on provided start-/end-date parameters
         dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to))
-
     }
 
     return(daily_data)
@@ -263,58 +268,65 @@ get_sea_data_zip <-
   function(stationID = "ALL",
            from,
            to) {
-
     base_url <- "http://cdn.knmi.nl/knmi/map/page/klimatologie/gegevens/daggegevens/etmgeg_"
     tmpdir <- tempdir()
 
-    if (stationID == "ALL")
-      sea_based_stations <- c(201,
-                              203,
-                              204,
-                              205,
-                              206,
-                              207,
-                              208,
-                              211,
-                              212,
-                              239,
-                              252,
-                              320,
-                              321)
-    else
+    if (stationID == "ALL") {
+      sea_based_stations <- c(
+        201,
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        211,
+        212,
+        239,
+        252,
+        320,
+        321
+      )
+    } else {
       sea_based_stations <- stationID
+    }
 
     daily_data <- NULL
     for (i in 1:length(sea_based_stations)) {
-
       URL <- paste0(base_url, sea_based_stations[i], ".zip")
 
       # download a zip file containing broadband data, save it to the working directory
       tmpfile <- file.path(tmpdir, basename(URL))
-      if (!file.exists(tmpfile))
+      if (!file.exists(tmpfile)) {
         download.file(URL,
-                      destfile = tmpfile,
-                      quiet = TRUE)
+          destfile = tmpfile,
+          quiet = TRUE
+        )
+      }
       # unzip the file
-      unzip(zipfile = tmpfile,
-            exdir = tmpdir)
+      unzip(
+        zipfile = tmpfile,
+        exdir = tmpdir
+      )
 
-          # read the data into R, with "|" seperating values
-      file <- paste0("etmgeg_",sea_based_stations[i],".txt") # example: etmgeg_201.txt
+      # read the data into R, with "|" seperating values
+      file <- paste0("etmgeg_", sea_based_stations[i], ".txt") # example: etmgeg_201.txt
       tmpfile <- file.path(tmpdir, file)
 
       daily_data <-
         # note: 'New names' warning becasue last column name is missing...
-        readr::read_csv(file = tmpfile,
-                        col_names = TRUE,
-                        col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
-                        skip = 35,
-                        show_col_types = FALSE) %>%
+        readr::read_csv(
+          file = tmpfile,
+          col_names = TRUE,
+          col_types = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii",
+          skip = 35,
+          show_col_types = FALSE
+        ) %>%
         dplyr::as_tibble() %>%
         # correct the first column name (if the name contains '#')
         # inspired by https://stackoverflow.com/questions/43578723/conditional-replacement-of-column-name-in-tibble-using-dplyr
-        #dplyr::rename(STN = '# STN') %>%
-        rename_all(~sub('# STN', 'STN', .x)) %>%
+        # dplyr::rename(STN = '# STN') %>%
+        rename_all(~ sub("# STN", "STN", .x)) %>%
         # remove strange and empty last column 'without name'
         # inspired by https://stackoverflow.com/questions/67346417/how-to-drop-columns-with-column-names-that-contain-specific-string
         # dplyr::select(-"...32") %>%
@@ -322,9 +334,7 @@ get_sea_data_zip <-
         # return subset based on provided start-/end-date parameters
         dplyr::filter(YYYYMMDD >= as.numeric(from) & YYYYMMDD <= as.numeric(to)) %>%
         dplyr::bind_rows(daily_data)
-
     }
 
     return(daily_data)
-
   }

@@ -17,27 +17,31 @@
 #' @export
 
 difference_in_days <- function(ac, ljg) {
-   # check the provided data-frames:
-   if(dim(ac)[2] > 2)
-      stop("The first data-frame has more than 2 columns. Please provide only the day-of-the-year and a column containing the value.")
-   if(dim(ljg)[2] > 2)
-      stop("The second data-frame has more than 2 columns. Please provide only the day-of-the-year and a column containing the value.")
-   if(dim(ac)[1] > 366)
-      stop("The first data-frame seems to contain data for more than one year.")
-   if(dim(ljg)[1] > 366)
-      stop("The second data-frame seems to contain data for more than one year.")
+  # check the provided data-frames:
+  if (dim(ac)[2] > 2) {
+    stop("The first data-frame has more than 2 columns. Please provide only the day-of-the-year and a column containing the value.")
+  }
+  if (dim(ljg)[2] > 2) {
+    stop("The second data-frame has more than 2 columns. Please provide only the day-of-the-year and a column containing the value.")
+  }
+  if (dim(ac)[1] > 366) {
+    stop("The first data-frame seems to contain data for more than one year.")
+  }
+  if (dim(ljg)[1] > 366) {
+    stop("The second data-frame seems to contain data for more than one year.")
+  }
 
-   # rename the column-names
-   colnames(ac) <- c("doy", "value")
-   colnames(ljg) <- c("doy", "value")
+  # rename the column-names
+  colnames(ac) <- c("doy", "value")
+  colnames(ljg) <- c("doy", "value")
 
-   # perform the calculation
-   DD.actueel <- max(ac$value)
-   dvj.actueel <- ac[ac$value == DD.actueel,]$doy
-   dvj.ljgem <- as.integer(mean(ljg[ljg$value > DD.actueel-5 & ljg$value < DD.actueel+5,]$doy))
-   if (is.na(dvj.ljgem)) {
-      (dvj.actueel - 365)
-   } else {
-      (dvj.actueel - dvj.ljgem)
-   }
+  # perform the calculation
+  DD.actueel <- max(ac$value)
+  dvj.actueel <- ac[ac$value == DD.actueel, ]$doy
+  dvj.ljgem <- as.integer(mean(ljg[ljg$value > DD.actueel - 5 & ljg$value < DD.actueel + 5, ]$doy))
+  if (is.na(dvj.ljgem)) {
+    (dvj.actueel - 365)
+  } else {
+    (dvj.actueel - dvj.ljgem)
+  }
 }

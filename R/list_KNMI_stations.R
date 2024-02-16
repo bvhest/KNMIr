@@ -24,7 +24,6 @@ list_stations <-
   function(active = TRUE,
            temperature_sensor = TRUE,
            identifying_columns = FALSE) {
-
     utils::data(stations)
 
     selected_stations <-
