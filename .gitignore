@@ -10,7 +10,7 @@ toDo
 temp
 figure
 KNMIr.Rcheck
+tinytest_run_only_for_new_version
+*.zip
 HowToUseKNMIr.R
 HowToUseKNMIr.md
-*.zip
-tinytest_run_only_for_new_version
