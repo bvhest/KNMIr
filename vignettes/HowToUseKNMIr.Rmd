@@ -16,7 +16,6 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 # Intro
 
 The package KNMIr provides functions to retrieve raw and processed climate
@@ -31,8 +30,6 @@ The package also contains two KNMI datasets with all measurement stations and wi
 
 This vignette presents some example use-cases.
 
-
-
 # Package installation
 
 The package KNMIr is not yet available on CRAN. It can be installed from GitHub with the following code:
@@ -43,8 +40,6 @@ The package KNMIr is not yet available on CRAN. It can be installed from GitHub 
 library(devtools)
 devtools::install_github("bvhest/KNMIr")
 ```
-
-
 
 # Package usage
 
@@ -83,8 +78,6 @@ Another helper-function is `rename_KNMI_column_names()`, which can be used to tr
 
 The functionality to add so-called degree-days, which can be viewed as a measure for the warmth during the growing season, has been moved to a new package `BWBr`. This package `BWBr` has been created for the analysis of cool-climate wine growing in The Netherlands and contains functions to enhance and plot the KNMI weather data.
 
--
-
 # Cases
 
 ## list and plot stations
@@ -99,7 +92,6 @@ head(list_stations(active = FALSE))
 ```{r plot_stations, INFO = FALSE, warning = FALSE}
 plot_stations()
 ```
-
 
 ## select stations
 
@@ -171,8 +163,6 @@ p <-
 print(p)
 ```
 
-
-
 ## KNMI weather forecast
 
 The KNMI provides a [six-day weather forecast](http://www.knmi.nl/nederland-nu/weer/verwachtingen) on it's website. Unfortunately, it's only available for the city of 'De Bilt', which is located at the centre of The Netherlands.
@@ -214,7 +204,6 @@ print(p +
     )
   ))
 ```
-
 
 ## Weerplaza 14-day weather forecast
 
@@ -262,7 +251,6 @@ print(p +
   ))
 ```
 
-
 ## Climate characteristics
 
 The characteristics of the climate (meteogram) for a certain location can be shown with the function 'r plot_climate_diagram'. The four characteristics mean temperature, precipitation, sun hours and wind can be selected for presentation.
@@ -305,8 +293,6 @@ plot_climate_diagram(
   currentYear = current_year
 )
 ```
-
-
 
 ## Feedback
 
