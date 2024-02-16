@@ -117,13 +117,15 @@ find_nearest_KNMI_station(lat = Tilburg$lat, lon = Tilburg$lon)
 current_year <- lubridate::year(lubridate::today())
 
 # get data for the measurement station Gilze-Rijen (id=350) from Januari 1st, 2016 up to the most recent date provided by the KNMI (which is 'today'-1 day).
-data <- 
-  get_daily_data(stationID = 350, 
-                 from = paste0(current_year, "0101")) %>% 
-   # only keep the following variables:
-   subset_data(variables = c("FG", "TG", "TN", "TX", "SQ", "SP", "Q", "RH", "NG")) %>%
-   # change the codes for these variables into more readable names:
-   rename_KNMI_column_names()
+data <-
+  get_daily_data(
+    stationID = 350,
+    from = paste0(current_year, "0101")
+  ) %>%
+  # only keep the following variables:
+  subset_data(variables = c("FG", "TG", "TN", "TX", "SQ", "SP", "Q", "RH", "NG")) %>%
+  # change the codes for these variables into more readable names:
+  rename_KNMI_column_names()
 
 glimpse(data)
 ```
@@ -133,30 +135,38 @@ Next, load the long-term averages over the period 1999-2014 of the KNMI measurem
 ```{r plot_data, INFO = FALSE, warning = FALSE, message = FALSE}
 data(knmi_langJarigGem)
 
-knmi.langJarigGem <- 
+knmi.langJarigGem <-
   knmi.langJarigGem %>%
   filter(stationID == 350)
 
 library(ggplot2)
 
-p <- 
-  ggplot() + 
-  geom_line(data = data,
-            aes(x = doy, y = gemTemp),
-            color = "#FA0000", show.legend = FALSE, size = 2) + 
-  geom_line(data = knmi.langJarigGem,
-            aes(x = doy, y = gemTemp),
-            color = "#850000", show.legend = FALSE, size = 1) +
-  scale_x_continuous(breaks = round(seq(0, 400, by = 30),1)) +
-  scale_y_continuous(breaks = round(seq(0, 40, by = 10),1)) +
+p <-
+  ggplot() +
+  geom_line(
+    data = data,
+    aes(x = doy, y = gemTemp),
+    color = "#FA0000", show.legend = FALSE, size = 2
+  ) +
+  geom_line(
+    data = knmi.langJarigGem,
+    aes(x = doy, y = gemTemp),
+    color = "#850000", show.legend = FALSE, size = 1
+  ) +
+  scale_x_continuous(breaks = round(seq(0, 400, by = 30), 1)) +
+  scale_y_continuous(breaks = round(seq(0, 40, by = 10), 1)) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90)) +
   labs(x = "day-of-the-year", y = "average temperature") +
-  ggtitle(label = paste("Daily average temperature in", current_year, "vs long-term average"),
-          subtitle = paste("source: KNMI, station: Gilze-Rijen (NL), creation date:",
-                           format(Sys.Date(), 
-                                  format="%d-%m-%Y"), 
-                           sep=" "))
+  ggtitle(
+    label = paste("Daily average temperature in", current_year, "vs long-term average"),
+    subtitle = paste("source: KNMI, station: Gilze-Rijen (NL), creation date:",
+      format(Sys.Date(),
+        format = "%d-%m-%Y"
+      ),
+      sep = " "
+    )
+  )
 
 print(p)
 ```
@@ -171,7 +181,7 @@ Let's add the forecast to the previous plot.
 
 ```{r get_forecast, INFO = FALSE, warning = FALSE, message = FALSE}
 # get the six-day weather forecast.
-forecast <- 
+forecast <-
   get_6day_weather_forecast()
 
 glimpse(forecast)
@@ -180,22 +190,29 @@ glimpse(forecast)
 As can be seen, this dataset contains lower- and upper-bounds for some variables, indicating the uncertainty in the forecasted values.
 
 ```{r show_forecast, INFO = FALSE, warning = FALSE, message = FALSE}
-forecast <- 
+forecast <-
   forecast %>%
-   rename_KNMI_column_names() # 260 is the measurement station at De Bilt
+  rename_KNMI_column_names() # 260 is the measurement station at De Bilt
 
 # pretend that the forecast for De Bilt is also valid for Gilze-Rijen:
-print(p + 
-  geom_line(data = forecast,
-            aes(x = doy, 
-                y = gemTemp),
-            color = "#0000FF", show.legend = FALSE, size = 2) + 
-  ggtitle(label = "6 day forecasted temperature vs long-term average",
-          subtitle = paste("source: KNMI, station: Gilze-Rijen (NL), creation date:",
-                           format(Sys.Date(), 
-                                  format="%d-%m-%Y"), 
-                           sep=" "))
-     )
+print(p +
+  geom_line(
+    data = forecast,
+    aes(
+      x = doy,
+      y = gemTemp
+    ),
+    color = "#0000FF", show.legend = FALSE, size = 2
+  ) +
+  ggtitle(
+    label = "6 day forecasted temperature vs long-term average",
+    subtitle = paste("source: KNMI, station: Gilze-Rijen (NL), creation date:",
+      format(Sys.Date(),
+        format = "%d-%m-%Y"
+      ),
+      sep = " "
+    )
+  ))
 ```
 
 
@@ -207,32 +224,42 @@ is available for most major cities.
 Let's add the 14-day forecast to the previous plot.
 
 ```{r get_forecast14, INFO = FALSE, warning = FALSE, message = FALSE}
-
 # get the fourteen-day weather forecast for Gilze-Rijen.
 # note that passing 'station = 350' as numeric parameter will also work.
-forecast14 <- 
+forecast14 <-
   get_14day_weather_forecast(station = "Gilze-Rijen")
 
 # rename the columns
-forecast14 <- 
+forecast14 <-
   forecast14 %>%
-   rename_KNMI_column_names()
+  rename_KNMI_column_names()
 
-print(p + 
-  geom_line(data = forecast14,
-            aes(x = doy, 
-                y = gemTemp),
-            color = "#00FFFF", show.legend = FALSE, size = 2) + 
-  geom_line(data = forecast,
-            aes(x = doy, 
-                y = gemTemp),
-            color = "#0000FF", show.legend = FALSE, size = 2) + 
-  ggtitle(label = "6 and 14 day forecasted temperature vs long-term average",
-          subtitle = paste("source: Weerplaza, station: Gilze-Rijen (NL), creation date:",
-                           format(Sys.Date(), 
-                                  format="%d-%m-%Y"), 
-                           sep=" "))
-  )
+print(p +
+  geom_line(
+    data = forecast14,
+    aes(
+      x = doy,
+      y = gemTemp
+    ),
+    color = "#00FFFF", show.legend = FALSE, size = 2
+  ) +
+  geom_line(
+    data = forecast,
+    aes(
+      x = doy,
+      y = gemTemp
+    ),
+    color = "#0000FF", show.legend = FALSE, size = 2
+  ) +
+  ggtitle(
+    label = "6 and 14 day forecasted temperature vs long-term average",
+    subtitle = paste("source: Weerplaza, station: Gilze-Rijen (NL), creation date:",
+      format(Sys.Date(),
+        format = "%d-%m-%Y"
+      ),
+      sep = " "
+    )
+  ))
 ```
 
 
@@ -242,31 +269,41 @@ The characteristics of the climate (meteogram) for a certain location can be sho
 
 ```{r plot_climate_diagram_temp, INFO = FALSE, warning = FALSE, message = FALSE}
 # get data for the measurement station Gilze-Rijen (id=350) from January 1st, 1981 up to the most recent date provided by the KNMI (which is 'today'-1 day).
-weather_data <- 
-  get_daily_data(stationID = 350, 
-                 from="19810101") %>% 
+weather_data <-
+  get_daily_data(
+    stationID = 350,
+    from = "19810101"
+  ) %>%
   subset_data(variables = c("FG", "TG", "TN", "TX", "SQ", "SP", "Q", "RH", "NG")) %>%
   rename_KNMI_column_names()
 
-plot_climate_diagram(data = weather_data,
-                     column = "gemTemp",
-                     startYear = 1981,
-                     endYear = 2010,
-                     currentYear = current_year)
+plot_climate_diagram(
+  data = weather_data,
+  column = "gemTemp",
+  startYear = 1981,
+  endYear = 2010,
+  currentYear = current_year
+)
 ```
 
 And the same for the precipitation, sun hours and wind:
 
 ```{r plot_climate_diagram_others, ECHO = FALSE, INFO = FALSE, warning = FALSE, message = FALSE}
-plot_climate_diagram(data = weather_data,
-                     column = "dagTotaalNeerslag",
-                     currentYear = current_year)
-plot_climate_diagram(data = weather_data,
-                     column = "gemWind",
-                     currentYear = current_year)
-plot_climate_diagram(data = weather_data,
-                     column = "zon",
-                     currentYear = current_year)
+plot_climate_diagram(
+  data = weather_data,
+  column = "dagTotaalNeerslag",
+  currentYear = current_year
+)
+plot_climate_diagram(
+  data = weather_data,
+  column = "gemWind",
+  currentYear = current_year
+)
+plot_climate_diagram(
+  data = weather_data,
+  column = "zon",
+  currentYear = current_year
+)
 ```
 
 

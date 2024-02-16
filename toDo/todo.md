@@ -7,6 +7,10 @@
 
 modify package to deal with new API. See https://developer.dataplatform.knmi.nl/get-started
      * realtime data: https://api.dataplatform.knmi.nl/open-data/datasets/weer_en_luchtdruk/versions/1.0/files
+     
+  - 2023-12-12: check requested data; when more then allowed by API, issue a warning.
+  - 2023-12-15: fix downloading data from sea-base stations
+  - 2023-12-16: fix error when too much data is downloaded using the flexible API (get daily data).
   - check if station code is valid, else issue error message.
   - change station-parameter to stations-parameter (so that a list of stations can be downloaded in one call)
   - provide English names for the variable-codes, next to the Dutch translations.
