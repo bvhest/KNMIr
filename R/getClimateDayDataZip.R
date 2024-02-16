@@ -314,7 +314,7 @@ get_sea_data_zip <-
       tmpfile <- file.path(tmpdir, file)
 
       daily_data <-
-        # note: 'New names' warning becasue last column name is missing...
+        # note: 'New names' warning because last column name is missing...
         readr::read_csv(
           file = tmpfile,
           col_names = TRUE,

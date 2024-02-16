@@ -1,29 +1,35 @@
 #' @title plot climate diagram.
 #'
 #' @description
-#' \code{plot_climate_diagram} plots a climate diagram for the specified variable.
+#' \code{plot_climate_diagram} plots a climate diagram for the specified
+#' variable.
 #'
 #' @details
-#' Plots a climate diagram, based loosely on the standard in the climate diagram world atlas compiled by Walter and
-#' Lieth (1957-1966).
+#' Plots a climate diagram, based loosely on the standard in the climate diagram
+#' world atlas compiled by Walter and Lieth (1957-1966).
 #'
 #' @param data dataframe containing daily measurements for the variable
-#' @param column the name of the variable to be plotted. The name must equal the column name in the dataframe. Note:
-#' at the moment only the mean temperature (gemTemp), precipitation (dagTotaalNeerslag), number of sun hours (zon)
-#' and wind force (gemWind) can be selected.
-#' @param startYear start year of the period for which the average values are calculated. Default is 1981.
-#' @param endYear end year of the period for which the average values are calculated. Default is 2010.
-#' @param currentYear the year for which the daily values must be shown. When not provided, the most current year from
-#' the dataframe is taken.
-#' @param title a title for the plot. When not provided, a default title is generated.
+#' @param column the name of the variable to be plotted. The name must equal the
+#' column name in the dataframe.
+#' Note: at the moment only the mean temperature (gemTemp), precipitation
+#' (dagTotaalNeerslag), number of sun hours (zon) and wind force (gemWind) can
+#' be selected.
+#' @param startYear start year of the period for which the average values are
+#' calculated. Default is 1981.
+#' @param endYear end year of the period for which the average values are
+#' calculated. Default is 2010.
+#' @param currentYear the year for which the daily values must be shown. When
+#' not provided, the most current year from the dataframe is taken.
+#' @param title a title for the plot. When not provided, a default title is
+#' generated.
 #' @export
 #'
 #
 # plot Klimaat Diagram
 #
-#
 # zie beschrijving standaarden: http://www.zoolex.org/walter.html
-# zie voorbeelden: https://www.meteo.be/meteo/view/nl/1088480-Jaarlijkse+grafieken.html
+# zie voorbeelden:
+# https://www.meteo.be/meteo/view/nl/1088480-Jaarlijkse+grafieken.html
 #
 # Versie die lijkt op de KMI-plot in de presentatie van Tonny van Dael:
 plot_climate_diagram <- function(data,
@@ -63,7 +69,8 @@ plot_climate_diagram <- function(data,
   }
 
   if (missing(title)) {
-    title <- paste0(stationsNaam, ", The Netherlands : average monthly ", variabeleNaam)
+    title <- paste0(stationsNaam, ", The Netherlands : average monthly ",
+                    variabeleNaam)
   }
   subtitle <- paste0("Lat: ", stationsLat, ", Lon: ", stationsLon)
 
@@ -111,9 +118,9 @@ plot_climate_diagram <- function(data,
   }
 
   # create plot:
-  # check https://stackoverflow.com/questions/6488748/passing-parameters-to-ggplot
-  #   --> werkt niet door de colour-variabele...
-  #
+  # check:
+  # https://stackoverflow.com/questions/6488748/passing-parameters-to-ggplot
+  #   --> werkt niet door de color-variabele...
 
   # label based on selected column:
   if (column == "gemTemp") {

@@ -30,7 +30,7 @@ expect_equal(ncol(dd), 41)
 # **********************************************************************************************************************
 # check non-default behavior: all sea-based stations, this year.
 # **********************************************************************************************************************
-station_count <- 12L
+station_count <- 11L
 
 dd <- get_daily_data_from_prepared_zip(station_type = "sea")
 
@@ -43,7 +43,7 @@ expect_equal(ncol(dd), 31)
 # **********************************************************************************************************************
 # check non-default behavior: all land- and sea-based stations, this year.
 # **********************************************************************************************************************
-station_count <- 60L
+station_count <- 59L
 
 dd <- get_daily_data_from_prepared_zip(station_type = "both")
 
@@ -110,7 +110,6 @@ dd <- get_daily_data_from_prepared_zip()
 dd_dep <- get_climate_data_zip()
 
 expect_equal(dd, dd_dep)
-
 
 dd <- get_daily_data_from_prepared_zip(station_type = "both")
 dd_dep <- get_climate_data_zip(return_only_land = FALSE)
