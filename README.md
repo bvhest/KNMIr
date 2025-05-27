@@ -3,7 +3,7 @@ KNMIr-package
 Bart van Hest
 2020-06-25 (2025-05-27)
 
-## KNMIr-package - R functions for retrieving climate data from the Dutch Meteorological Institute (KNMI) API.
+## R functions for retrieving climate data from the Dutch Meteorological Institute (KNMI) API.
 
 ### Description
 
