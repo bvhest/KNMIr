@@ -1,11 +1,9 @@
 KNMIr-package
 ================
 Bart van Hest
-2020-06-25
+2020-06-25 (2025-05-27)
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-## KNMIr-package - R functions for retrieving climate data from the Dutch meteorological institute KNMI.
+## KNMIr-package - R functions for retrieving climate data from the Dutch Meteorological Institute (KNMI) API.
 
 ### Description
 
@@ -33,7 +31,7 @@ See the [package
 vignette](https://github.com/BvHest/KNMIr/blob/master/vignettes/HowToUseKNMIr.Rmd)
 for some examples. The vignette can be viewed from R/Rstudio with
 
-``` r
+```r
 vignette("HowToUseKNMIr")
 ```
 

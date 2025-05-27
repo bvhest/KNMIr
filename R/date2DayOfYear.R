@@ -17,3 +17,4 @@ date2day_of_year <- function(datum) {
   d <- as.Date(datum)
   strptime(datum, "%d/%m/%Y")$yday + 1
 }
+

@@ -26,10 +26,14 @@ add_degree_days <- function(data,
                             endDate = paste(format(Sys.Date(), format = "%Y"), "12-31", sep = "-")) {
   # stop deze functie als de kolommen nog niet zijn hernoemd.
   if (!("stationID" %in% names(data))) {
-    stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
+    stop(
+      "This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'."
+    )
   }
   if (!("stationID" %in% names(data) & "doy" %in% names(data) & "gemTemp" %in% names(data))) {
-    stop("This function needs three mandatory columns; stationID, doy (day-of-the-year) and gemTemp (the daily mean temperature).")
+    stop(
+      "This function needs three mandatory columns; stationID, doy (day-of-the-year) and gemTemp (the daily mean temperature)."
+    )
   }
 
   # wanneer afwezig; voeg de jaar-kolom toe:
@@ -57,7 +61,7 @@ add_degree_days <- function(data,
 #' \code{calculate_Huglin_index} calculates the degree days according to the Huglin-algorithm.
 #'
 #' @details
-#' This function calculates the Huglin index (see \href{http://www.brabantsewijnbouwers.nl/index.php?section=13&page=57&student=1171}{Klimaat en de Druivelaar}
+#' This function calculates the Huglin index (see \href{https://www.wijnbouwersderlagelanden.nl/cursusse/druiventeelt/klimaat/klimaat-en-de-druivelaar/}{Klimaat en de Druivelaar}
 #' on the website of the Brabantse Wijnbouwers (in Dutch)).
 #' The Huglin index is one of the statistics that represents the total
 #' amount of heat in a season that is bennefical to the growth of plants. More specific, its used to
@@ -89,14 +93,16 @@ calculate_Huglin_index <- function(dgg,
                                    endDate = paste(format(Sys.Date(), format = "%Y"), "12-31", sep = "-")) {
   # stop deze functie als de kolommen nog niet zijn hernoemd.
   if (!("stationID" %in% names(dgg))) {
-    stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
+    stop(
+      "This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'."
+    )
   }
 
   #   attach(dgg); on.exit(detach(name = dgg))
 
   # convert to day-of-year:
   doyStart <- lubridate::yday(startDate)
-  doyEnd <- lubridate:::yday(endDate)
+  doyEnd <- lubridate::yday(endDate)
 
   # subset op basis van de start en eind datum:
   range <- dgg[dgg$doy >= doyStart & dgg$doy <= doyEnd, ]
@@ -117,7 +123,7 @@ calculate_Huglin_index <- function(dgg,
 #' \code{calculate_VE_index} calculates the degree days according to the VE-algorithm.
 #'
 #' @details
-#' This function calculates the VE index (see \href{http://www.brabantsewijnbouwers.nl/index.php?section=13&page=57&student=1171}{Klimaat en de Druivelaar}
+#' This function calculates the VE index (see \href{https://www.wijnbouwersderlagelanden.nl/cursusse/druiventeelt/klimaat/klimaat-en-de-druivelaar/}{Klimaat en de Druivelaar}
 #' on the website of the Brabantse Wijnbouwers (in Dutch)).
 #' The VE index is one of the statistics that represents the total
 #' amount of heat in a season that is bennefical to the growth of plants. More specific, its used to
@@ -147,7 +153,9 @@ calculate_VE_index <- function(dgg,
                                endDate = paste(format(Sys.Date(), format = "%Y"), "12-31", sep = "-")) {
   # stop deze functie als de kolommen nog niet zijn hernoemd.
   if (!("stationID" %in% names(dgg))) {
-    stop("This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'.")
+    stop(
+      "This function can only be applied after the data-frame columns have been renamed with the function 'rename_columns_KNMI_data()'."
+    )
   }
 
   #   attach(dgg); on.exit(detach(name = dgg))
@@ -166,3 +174,4 @@ calculate_VE_index <- function(dgg,
   #   detach(name = dgg)
   return(range[, c("stationID", "jaar", "doy", "somVEIndex")])
 }
+

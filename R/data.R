@@ -78,3 +78,4 @@
 #' @format A data frame with 13 rows and 7 variables:
 #' @source Google Maps
 "map.nl"
+

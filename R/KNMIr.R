@@ -1,4 +1,4 @@
-#' KNMIr: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI.
+#' KNMIr: Wrapper-functions for retrieving historic climate data and the six-day forecast from the Dutch Meteorological Institute (KNMI) API.
 #'
 #' This package provides functions to retrieve raw and processed climate
 #' data from the official Dutch meteorological institute (KNMI). For some stations data goes back to 1900.
@@ -10,9 +10,11 @@
 #' The package also contains two KNMI datasets with all measurement stations and with
 #' long term averages from 2000-2015.
 #'
-#' @docType package
+#' @docType _PACKAGE
 #' @name KNMIr
-#' @author Bart van Hest, \email{hestbv@@gmail.com}, Juli 2017 - June 2020.
+#' @aliases KNMIr
+#' @author Bart van Hest, \email{hestbv@@gmail.com}, Juli 2017 - May 2025.
 #' @keywords package documentation
 #' @seealso German climate data: \url{https://github.com/brry/rdwd}
 NULL
+

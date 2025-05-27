@@ -1,14 +1,8 @@
 Package: KNMIr
-Author: Bart van Hest
-Maintainer: Bart van Hest <hestbv@gmail.com>
-Title: functions for retrieving historic climate data and the six-day forecast from the Dutch meteorological institute KNMI
-Version: 0.4.3
-Date: 2024-02-16
-Type: Package
-Authors@R: c( person("Bart", "van Hest", 
-                     email = "hestbv@gmail.com",
-                     role = c("aut", "cre")))
-Description: This package provides functions to retrieve raw and processed climate
+Title: R Wrapper-Functions for the 'KNMI' (Dutch Meteorological Institute) API
+Version: 0.5.0
+Authors@R: person("Bart", "van Hest", email = "hestbv@gmail.com", role = c("aut", "cre"))
+Description: Functions to retrieve raw and processed climate
     data from the official Dutch meteorological institute (KNMI). For some stations data goes back to 1900. Two functions 
     are provied to retrieve the 6-day weather forecast from the KNMI and the 14-day forecast from the Weerplaza-website.
     With helper-functions, the data can be subsetted based on year and specified variables. The returned
@@ -16,28 +10,31 @@ Description: This package provides functions to retrieve raw and processed clima
     are available, such as a function that calculates the Huglin- or VE-index.
     The package also contains two KNMI datasets; one with all land- and sea-based measurement stations and one with 
     long term averages from 2000-2015.
-URL: https://github.com/hestbv/KNMIr
-License: GPL-3
+URL: https://github.com/bvhest/KNMIr
+License: GPL (>= 3)
 LazyLoad: true
 LazyData: true
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Imports:
     magrittr,
-    plyr,
+    data.table,
     dplyr,
+    plyr,
+    tidyr,
     stringr,
     readr,
     lubridate,
     rvest,
     xml2,
     ggplot2,
-    ggmap,
-    data.table
+    ggmap
 Suggests: knitr,
     rmarkdown,
     markdown,
+    tidyverse,
     tinytest
-VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

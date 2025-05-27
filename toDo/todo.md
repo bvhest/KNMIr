@@ -52,4 +52,4 @@ Link naar data:
 
 ## Known bugs
 
-  - none
+  - 2025-05-27 (reported by RIVM): order of columns has changed, resulting in incorrect values. CLOSED (2025-05-27)

@@ -133,8 +133,8 @@ get_daily_data <-
     colnames(data_daily) <-
       c(
         "STN", "YYYYMMDD", "DDVEC", "FHVEC", "FG", "FHX", "FHXH", "FHN", "FHNH", "FXX", "FXXH", "TG", "TN", "TNH", "TX", "TXH", "T10N",
-        "T10NH", "SQ", "SP", "Q", "DR", "RH", "RHX", "RHXH", "EV24", "PG", "PX", "PXH", "PN", "PNH", "VVN", "VVNH", "VVX", "VVXH", "NG",
-        "UG", "UX", "UXH", "UN", "UNH"
+        "T10NH", "SQ", "SP", "Q", "DR", "RH", "RHX", "RHXH", "PG", "PX", "PXH", "PN", "PNH", "VVN", "VVNH", "VVX", "VVXH", "NG",
+        "UG", "UX", "UXH", "UN", "UNH", "EV24"
       )
 
     data_daily <-

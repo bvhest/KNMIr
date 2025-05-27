@@ -32,14 +32,8 @@
 # https://www.meteo.be/meteo/view/nl/1088480-Jaarlijkse+grafieken.html
 #
 # Versie die lijkt op de KMI-plot in de presentatie van Tonny van Dael:
-plot_climate_diagram <- function(data,
-                                 column = "gemTemp",
-                                 startYear = 1981,
-                                 endYear = 2010,
-                                 currentYear,
-                                 title) {
-
-  data(stations)
+plot_climate_diagram <- function(data, column = "gemTemp", startYear = 1981, endYear = 2010, currentYear, title) {
+  utils::data(stations)
   stationsNaam <- stations$plaats[stations$stationID == unique(data$stationID)]
   stationsLat <- stations$lat[stations$stationID == unique(data$stationID)]
   stationsLon <- stations$lon[stations$stationID == unique(data$stationID)]
@@ -69,8 +63,7 @@ plot_climate_diagram <- function(data,
   }
 
   if (missing(title)) {
-    title <- paste0(stationsNaam, ", The Netherlands : average monthly ",
-                    variabeleNaam)
+    title <- paste0(stationsNaam, ", The Netherlands : average monthly ", variabeleNaam)
     subtitle <- paste0("Lat: ", stationsLat, ", Lon: ", stationsLon)
   }
 
@@ -80,34 +73,34 @@ plot_climate_diagram <- function(data,
     paste0("values ", currentYear)
   )
 
-  plotData <- data %>%
-    dplyr::filter(year >= startYear) %>%
-    dplyr::select(year, month, column)
+  plotData <- data %>% dplyr::filter(year >= startYear) %>% dplyr::select(year, month, column)
 
   colnames(plotData) <- c("year", "month", "yvar")
 
   if (column == "dagTotaalNeerslag") {
-    plotData <- plotData %>%
-      dplyr::group_by(year, month) %>%
-      dplyr::summarise(yvar = sum(yvar))
+    plotData <- plotData %>% dplyr::group_by(year, month) %>% dplyr::summarise(yvar = sum(yvar))
   }
 
   # calculate monthly data based on daily data:
-  maandgegevens <-
-    plyr::ddply(plotData,
-      c("month"),
-      plyr::summarise,
-      minYvar = min(yvar, na.rm = TRUE),
-      maxYvar = max(yvar, na.rm = TRUE)
-    )
+  maandgegevens <- plyr::ddply(
+    plotData,
+    c("month"),
+    plyr::summarise,
+    minYvar = min(yvar, na.rm = TRUE),
+    maxYvar = max(yvar, na.rm = TRUE)
+  )
 
   maandgegevens$minJaar <- 0
   maandgegevens$maxJaar <- 0
   for (m in 1:12) {
-    maandgegevens$minJaar[m] <-
-      max(plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m, ]$minYvar, ]$year, na.rm = TRUE)
-    maandgegevens$maxJaar[m] <-
-      max(plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m, ]$maxYvar, ]$year, na.rm = TRUE)
+    maandgegevens$minJaar[m] <- max(
+      plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m, ]$minYvar, ]$year,
+      na.rm = TRUE
+    )
+    maandgegevens$maxJaar[m] <- max(
+      plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m, ]$maxYvar, ]$year,
+      na.rm = TRUE
+    )
   }
 
   # create plot:
@@ -125,12 +118,9 @@ plot_climate_diagram <- function(data,
     ylabel <- "Sun (hrs)"
   }
 
-  p <-
-    ggplot(
-      data = plotData,
-      aes(x = month, y = yvar, colour = "extrema")
-    ) +
-    geom_boxplot(aes(group = month),
+  p <- ggplot(data = plotData, aes(x = month, y = yvar, colour = "extrema")) +
+    geom_boxplot(
+      aes(group = month),
       show.legend = FALSE,
       fill = "blue",
       outlier.shape = 19,
@@ -163,19 +153,13 @@ plot_climate_diagram <- function(data,
       size = 4,
       show.legend = FALSE
     ) +
-    scale_colour_manual(
-      name = "Legende:",
-      values = c("blue", "red", "green"),
-      labels = labels
-    ) +
+    scale_colour_manual(name = "Legende:", values = c("blue", "red", "green"), labels = labels) +
     scale_x_continuous(breaks = seq(1, 12, by = 1)) +
     theme_bw() +
     theme(legend.title = element_blank(), legend.position = "bottom") +
     labs(x = "", y = ylabel) +
-    ggtitle(
-      label = title,
-      subtitle = subtitle
-    )
+    ggtitle(label = title, subtitle = subtitle)
 
   print(p)
 }
+

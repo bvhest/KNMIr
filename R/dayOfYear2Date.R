@@ -19,3 +19,4 @@ day_of_year2date <- function(doy, year = format(Sys.Date(), format = "%Y")) {
   x <- unique(as.numeric(doy))
   as.Date(x - 1, origin = paste(year, "01-01", sep = "-"))
 }
+

@@ -19,10 +19,14 @@
 difference_in_days <- function(ac, ljg) {
   # check the provided data-frames:
   if (dim(ac)[2] > 2) {
-    stop("The first data-frame has more than 2 columns. Please provide only the day-of-the-year and a column containing the value.")
+    stop(
+      "The first data-frame has more than 2 columns. Please provide only the day-of-the-year and a column containing the value."
+    )
   }
   if (dim(ljg)[2] > 2) {
-    stop("The second data-frame has more than 2 columns. Please provide only the day-of-the-year and a column containing the value.")
+    stop(
+      "The second data-frame has more than 2 columns. Please provide only the day-of-the-year and a column containing the value."
+    )
   }
   if (dim(ac)[1] > 366) {
     stop("The first data-frame seems to contain data for more than one year.")
@@ -45,3 +49,4 @@ difference_in_days <- function(ac, ljg) {
     (dvj.actueel - dvj.ljgem)
   }
 }
+

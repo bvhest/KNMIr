@@ -10,46 +10,125 @@
 #' @return data-frame with subset of the KNMI-data.
 #' @export
 #'
-rename_KNMI_column_names <-
-  function(daily_data) {
-    # provide more meaninfull column names:
-    KNMI_kolomnamen <-
-      c(
-        "STN", "station", "YYYYMMDD", "date", "DDVEC", "FHVEC",
-        "FG", "FHX", "FHXH", "FHN", "FHNH", "FXX", "FXXH",
-        "TG", "TN", "TNH", "TX", "TXH", "T10N", "T10NH",
-        "SQ", "SP", "Q", "DR",
-        "RH", "RHX", "RHXH", "EV24",
-        "PG", "PX", "PXH", "PN", "PNH",
-        "VVN", "VVNH", "VVX", "VVXH",
-        "NG",
-        "UG", "UX", "UXH", "UN", "UNH",
-        "SD_minTemp", "SD_gemTemp", "SD_maxTemp", "SD_neerslag",
-        "neerslagKans", "windkracht", "doy", "year", "month", "week", "day"
-      )
-    beschrijvende_kolomnamen <-
-      c(
-        "stationID", "stationNaam", "YYYYMMDD", "datum", "VectorgemiddeldeWindrichting", "Vectorgemiddeldewindsnelheid",
-        "gemWind", "maxWind", "uurMaxWind", "minWind", "uurMinWind", "maxWindstoot", "uurMaxWindstoot",
-        "gemTemp", "minTemp", "uurMinTemp", "maxTemp", "uurMaxTemp", "minTemp10cm", "dagdeelMinTemp10cm",
-        "zon", "percZon", "straling", "duurNeerslag",
-        "dagTotaalNeerslag", "maxUurNeerslag", "uurUurNeerslag", "refGewasverdamping",
-        "gemLuchtdruk", "maxUurLuchtdruk", "uurMaxUurLuchtdruk", "minUurLuchtdruk", "uurMinUurLuchtdruk",
-        "minZicht", "uurMinZicht", "maxZicht", "uurMaxZicht",
-        "gemBewolking",
-        "gemRelVocht", "maxRelVocht", "uurMaxRelVocht", "minRelVocht", "uurMinRelVocht",
-        "standaardDev_minTemp", "standaardDev_gemTemp", "standaardDev_maxTemp", "standaardDev_neerslag",
-        "neerslagKans", "windkracht", "doy", "jaar", "maand", "week", "dag"
-      )
+rename_KNMI_column_names <- function(daily_data) {
+  # provide more meaninfull column names:
+  KNMI_kolomnamen <- c(
+    "STN",
+    "station",
+    "YYYYMMDD",
+    "date",
+    "DDVEC",
+    "FHVEC",
+    "FG",
+    "FHX",
+    "FHXH",
+    "FHN",
+    "FHNH",
+    "FXX",
+    "FXXH",
+    "TG",
+    "TN",
+    "TNH",
+    "TX",
+    "TXH",
+    "T10N",
+    "T10NH",
+    "SQ",
+    "SP",
+    "Q",
+    "DR",
+    "RH",
+    "RHX",
+    "RHXH",
+    "PG",
+    "PX",
+    "PXH",
+    "PN",
+    "PNH",
+    "VVN",
+    "VVNH",
+    "VVX",
+    "VVXH",
+    "NG",
+    "UG",
+    "UX",
+    "UXH",
+    "UN",
+    "UNH",
+    "EV24",
+    "SD_minTemp",
+    "SD_gemTemp",
+    "SD_maxTemp",
+    "SD_neerslag",
+    "neerslagKans",
+    "windkracht",
+    "doy",
+    "year",
+    "month",
+    "week",
+    "day"
+  )
+  beschrijvende_kolomnamen <- c(
+    "stationID",
+    "stationNaam",
+    "YYYYMMDD",
+    "datum",
+    "VectorgemiddeldeWindrichting",
+    "Vectorgemiddeldewindsnelheid",
+    "gemWind",
+    "maxWind",
+    "uurMaxWind",
+    "minWind",
+    "uurMinWind",
+    "maxWindstoot",
+    "uurMaxWindstoot",
+    "gemTemp",
+    "minTemp",
+    "uurMinTemp",
+    "maxTemp",
+    "uurMaxTemp",
+    "minTemp10cm",
+    "dagdeelMinTemp10cm",
+    "zon",
+    "percZon",
+    "straling",
+    "duurNeerslag",
+    "dagTotaalNeerslag",
+    "maxUurNeerslag",
+    "uurUurNeerslag",
+    "gemLuchtdruk",
+    "maxUurLuchtdruk",
+    "uurMaxUurLuchtdruk",
+    "minUurLuchtdruk",
+    "uurMinUurLuchtdruk",
+    "minZicht",
+    "uurMinZicht",
+    "maxZicht",
+    "uurMaxZicht",
+    "gemBewolking",
+    "gemRelVocht",
+    "maxRelVocht",
+    "uurMaxRelVocht",
+    "minRelVocht",
+    "uurMinRelVocht",
+    "refGewasverdamping",
+    "standaardDev_minTemp",
+    "standaardDev_gemTemp",
+    "standaardDev_maxTemp",
+    "standaardDev_neerslag",
+    "neerslagKans",
+    "windkracht",
+    "doy",
+    "jaar",
+    "maand",
+    "week",
+    "dag"
+  )
 
-    daily_data <-
-      set_column_names(daily_data,
-        col.from = KNMI_kolomnamen,
-        col.to = beschrijvende_kolomnamen
-      )
+  daily_data <- set_column_names(daily_data, col.from = KNMI_kolomnamen, col.to = beschrijvende_kolomnamen)
 
-    return(daily_data)
-  }
+  return(daily_data)
+}
 
 #' @title rename columns in the raw KNMI dataset.
 #'
@@ -65,9 +144,9 @@ rename_KNMI_column_names <-
 #' @return data-frame with subset of the KNMI-data.
 #' @export
 #'
-rename_columns_KNMI_data <-
-  function(daily_data) {
-    print("Depricated function. Please use 'rename_KNMI_column_names' instead.")
+rename_columns_KNMI_data <- function(daily_data) {
+  print("Depricated function. Please use 'rename_KNMI_column_names' instead.")
 
-    return(rename_KNMI_column_names(daily_data))
-  }
+  return(rename_KNMI_column_names(daily_data))
+}
+

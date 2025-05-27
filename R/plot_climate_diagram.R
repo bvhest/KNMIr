@@ -32,28 +32,22 @@
 # https://www.meteo.be/meteo/view/nl/1088480-Jaarlijkse+grafieken.html
 #
 # Versie die lijkt op de KMI-plot in de presentatie van Tonny van Dael:
-plot_climate_diagram <- function(data,
-                                 column = "gemTemp",
-                                 startYear = 1981,
-                                 endYear = 2010,
-                                 currentYear,
-                                 title) {
-  data(stations)
+plot_climate_diagram <- function(data, column = "gemTemp", startYear = 1981, endYear = 2010, currentYear, title) {
+  utils::data(stations)
   stationsNaam <- stations$plaats[stations$stationID == unique(data$stationID)]
   stationsLat <- stations$lat[stations$stationID == unique(data$stationID)]
   stationsLon <- stations$lon[stations$stationID == unique(data$stationID)]
 
-  variabeleNaam <-
-    dplyr::case_when(
-      column == "gemTemp" ~ "temperature",
-      column == "maxTemp" ~ "maximum temperature",
-      column == "minTemp" ~ "minimum temperature",
-      column == "gemWind" ~ "wind",
-      column == "zon" ~ "sun",
-      column == "straling" ~ "solar radiation",
-      column == "dagTotaalNeerslag" ~ "daily precipitation",
-      column == "gemBewolking" ~ "cloud cover"
-    )
+  variabeleNaam <- dplyr::case_when(
+    column == "gemTemp" ~ "temperature",
+    column == "maxTemp" ~ "maximum temperature",
+    column == "minTemp" ~ "minimum temperature",
+    column == "gemWind" ~ "wind",
+    column == "zon" ~ "sun",
+    column == "straling" ~ "solar radiation",
+    column == "dagTotaalNeerslag" ~ "daily precipitation",
+    column == "gemBewolking" ~ "cloud cover"
+  )
 
   if (missing(currentYear)) {
     currentYear <- max(data$jaar)
@@ -69,52 +63,44 @@ plot_climate_diagram <- function(data,
   }
 
   if (missing(title)) {
-    title <- paste0(stationsNaam, ", The Netherlands : average monthly ",
-                    variabeleNaam)
+    title <- paste0(stationsNaam, ", The Netherlands : average monthly ", variabeleNaam)
   }
   subtitle <- paste0("Lat: ", stationsLat, ", Lon: ", stationsLon)
 
-  labels <-
-    c(
-      paste0("extreme values ", startYear, "-", currentYear),
-      paste0("normal values ", startYear, "-", endYear),
-      paste0("values ", currentYear)
-    )
+  labels <- c(
+    paste0("extreme values ", startYear, "-", currentYear),
+    paste0("normal values ", startYear, "-", endYear),
+    paste0("values ", currentYear)
+  )
 
-  plotData <-
-    data %>%
-    dplyr::filter(jaar >= startYear) %>%
-    dplyr::select(jaar, maand, all_of(column))
+  plotData <- data %>% dplyr::filter(jaar >= startYear) %>% dplyr::select(jaar, maand, all_of(column))
 
   colnames(plotData) <- c("year", "month", "yvar")
 
   if (column == "dagTotaalNeerslag") {
-    plotData <-
-      plotData %>%
-      dplyr::group_by(year, month) %>%
-      dplyr::summarise(yvar = sum(yvar))
+    plotData <- plotData %>% dplyr::group_by(year, month) %>% dplyr::summarise(yvar = sum(yvar))
   }
 
   # calculate monthly data based on daily data:
-  maandgegevens <-
-    plyr::ddply(plotData,
-      c("month"),
-      plyr::summarise,
-      minYvar = min(yvar, na.rm = TRUE),
-      maxYvar = max(yvar, na.rm = TRUE)
-    )
+  maandgegevens <- plyr::ddply(
+    plotData,
+    c("month"),
+    plyr::summarise,
+    minYvar = min(yvar, na.rm = TRUE),
+    maxYvar = max(yvar, na.rm = TRUE)
+  )
 
   maandgegevens$minJaar <- 0
   maandgegevens$maxJaar <- 0
   for (m in 1:12) {
-    maandgegevens$minJaar[m] <-
-      max(plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m, ]$minYvar, ]$year,
-        na.rm = TRUE
-      )
-    maandgegevens$maxJaar[m] <-
-      max(plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m, ]$maxYvar, ]$year,
-        na.rm = TRUE
-      )
+    maandgegevens$minJaar[m] <- max(
+      plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m, ]$minYvar, ]$year,
+      na.rm = TRUE
+    )
+    maandgegevens$maxJaar[m] <- max(
+      plotData[plotData$month == m & plotData$yvar == maandgegevens[maandgegevens$month == m, ]$maxYvar, ]$year,
+      na.rm = TRUE
+    )
   }
 
   # create plot:
@@ -133,8 +119,7 @@ plot_climate_diagram <- function(data,
     ylabel <- "Sun (hrs)"
   }
 
-  p <-
-    ggplot2::ggplot() +
+  p <- ggplot2::ggplot() +
     # boxplot with all the extremes
     ggplot2::geom_boxplot(
       data = plotData,
@@ -158,8 +143,7 @@ plot_climate_diagram <- function(data,
     ) +
     # data for current year
     ggplot2::geom_smooth(
-      data = plotData %>%
-        dplyr::filter(year == currentYear),
+      data = plotData %>% dplyr::filter(year == currentYear),
       ggplot2::aes(x = month, y = yvar, colour = "recent"),
       method = "loess",
       se = FALSE,
@@ -177,25 +161,13 @@ plot_climate_diagram <- function(data,
       size = 4,
       show.legend = FALSE
     ) +
-    ggplot2::scale_colour_manual(
-      name = "Legende:",
-      values = c("blue", "red", "green"),
-      labels = labels
-    ) +
+    ggplot2::scale_colour_manual(name = "Legende:", values = c("blue", "red", "green"), labels = labels) +
     ggplot2::scale_x_continuous(breaks = seq(1, 12, by = 1)) +
     ggplot2::theme_bw() +
-    ggplot2::theme(
-      legend.title = element_blank(),
-      legend.position = "bottom"
-    ) +
-    ggplot2::labs(
-      x = "",
-      y = ylabel
-    ) +
-    ggplot2::ggtitle(
-      label = title,
-      subtitle = subtitle
-    )
+    ggplot2::theme(legend.title = element_blank(), legend.position = "bottom") +
+    ggplot2::labs(x = "", y = ylabel) +
+    ggplot2::ggtitle(label = title, subtitle = subtitle)
 
   print(p)
 }
+

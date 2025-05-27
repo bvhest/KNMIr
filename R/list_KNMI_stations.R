@@ -20,28 +20,24 @@
 #'   still active; }
 #' @keywords list weather stations
 #' @export
-list_stations <-
-  function(active = TRUE,
-           temperature_sensor = TRUE,
-           identifying_columns = FALSE) {
-    utils::data(stations)
+list_stations <- function(active = TRUE, temperature_sensor = TRUE, identifying_columns = FALSE) {
+  utils::data(stations)
 
-    selected_stations <-
-      stations %>%
-      # filter on (in)active stations:
-      # if the einddatum (enddate) has a value, this value is always in the past
-      # and the station is inactive, if it's NA the station is active.
-      dplyr::filter(is.na(einddatum) == active) %>%
-      # filter on stations with(out) temperature sensor:
-      dplyr::filter(temp_sensor == temperature_sensor) %>%
-      dplyr::as_tibble()
+  selected_stations <- stations %>%
+    # filter on (in)active stations:
+    # if the einddatum (enddate) has a value, this value is always in the past
+    # and the station is inactive, if it's NA the station is active.
+    dplyr::filter(is.na(einddatum) == active) %>%
+    # filter on stations with(out) temperature sensor:
+    dplyr::filter(temp_sensor == temperature_sensor) %>%
+    dplyr::as_tibble()
 
-    if (identifying_columns) {
-      selected_stations <-
-        selected_stations %>%
-        dplyr::mutate(active = is.na(einddatum)) %>%
-        dplyr::select(stationID, plaats, active)
-    }
-
-    return(selected_stations)
+  if (identifying_columns) {
+    selected_stations <- selected_stations %>%
+      dplyr::mutate(active = is.na(einddatum)) %>%
+      dplyr::select(stationID, plaats, active)
   }
+
+  return(selected_stations)
+}
+

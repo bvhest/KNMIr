@@ -79,8 +79,10 @@ get_6day_weather_forecast <- function() {
     voorspelling$minTempSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(minTemp[i])))
     # gemTemp
     voorspelling$gemTemp[i] <- mean(c(voorspelling$minTemp[i], voorspelling$maxTemp[i]))
-    voorspelling$gemTempSD[i] <-
-      sqrt((voorspelling$minTempSD[i] * voorspelling$minTempSD[i] + voorspelling$maxTempSD[i] * voorspelling$maxTempSD[i]) / 2)
+    voorspelling$gemTempSD[i] <- sqrt(
+      (voorspelling$minTempSD[i] * voorspelling$minTempSD[i] + voorspelling$maxTempSD[i] * voorspelling$maxTempSD[i]) /
+        2
+    )
     # neerslag
     voorspelling$neerslag[i] <- mean(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
     voorspelling$neerslagSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
@@ -94,8 +96,20 @@ get_6day_weather_forecast <- function() {
 
   # kolom-namen omzetten van leesbaar, naar  codes (kan weer worden teruggezet met de functie 'rename_columns()')
   colnames(voorspelling) <- c(
-    "STN", "YYYYMMDD", "date", "TX", "SD_maxTemp", "TN", "SD_minTemp", "TG", "SD_gemTemp",
-    "RH", "SD_neerslag", "neerslagKans", "SP", "windkracht"
+    "STN",
+    "YYYYMMDD",
+    "date",
+    "TX",
+    "SD_maxTemp",
+    "TN",
+    "SD_minTemp",
+    "TG",
+    "SD_gemTemp",
+    "RH",
+    "SD_neerslag",
+    "neerslagKans",
+    "SP",
+    "windkracht"
   )
 
   # windkracht omzetten naar m/s:
@@ -110,29 +124,6 @@ get_6day_weather_forecast <- function() {
   voorspelling$day <- wday(voorspelling$date)
 
   return(voorspelling)
-}
-
-#
-# hulp-functie voor get_6day_weather_prediction
-#
-extraheer_numerieke_waarden <- function(html_node) {
-  text <- stringr::str_extract_all(
-    rvest::html_text(html_node),
-    "\\(?[0-9,]+\\)?"
-  )[[1]]
-  numeriek <- as.numeric(text)
-  return(numeriek)
-}
-
-#
-# hulp-functie voor omzetten windkracht in Beaufort naar m/s
-#
-converteer_beaufort_schaal <- function(windkracht) {
-  data(beaufort_scale)
-  min_m_per_s <- beaufort_scale$min_m_per_s[match(windkracht, beaufort_scale$Beaufort)]
-  max_m_per_s <- beaufort_scale$max_m_per_s[match(windkracht, beaufort_scale$Beaufort)]
-
-  return(data.frame(minWind = min_m_per_s, maxWind = max_m_per_s))
 }
 
 #' @title Get fourteen-day weather forecast (Weerplaza).
@@ -172,7 +163,7 @@ converteer_beaufort_schaal <- function(windkracht) {
 #' @source \url{https://www.weerplaza.nl/nederland/}
 #' @keywords weather forecast
 #' @export
-get_14day_weather_forecast <- function() {
+get_14day_weather_forecast <- function(station) {
   # haal 6-daagse voorspelling:
   baseURL <- "https://www.weerplaza.nl/nederland/gilze-rijen/9950/"
   pagina <- xml2::read_html(baseURL)
@@ -200,7 +191,7 @@ get_14day_weather_forecast <- function() {
   datum <- unique(rvest::html_text(datum))
   size <- length(datum)
   voorspelling <- data.frame(
-    station = rep("260", size),
+    station = rep("350", size),
     YYYYMMDD = rep("20000101", size),
     date = as.Date("2000-01-01") + 1:size, # just dummy dates
     maxTemp = double(size),
@@ -229,8 +220,10 @@ get_14day_weather_forecast <- function() {
     voorspelling$minTempSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(minTemp[i])))
     # gemTemp
     voorspelling$gemTemp[i] <- mean(c(voorspelling$minTemp[i], voorspelling$maxTemp[i]))
-    voorspelling$gemTempSD[i] <-
-      sqrt((voorspelling$minTempSD[i] * voorspelling$minTempSD[i] + voorspelling$maxTempSD[i] * voorspelling$maxTempSD[i]) / 2)
+    voorspelling$gemTempSD[i] <- sqrt(
+      (voorspelling$minTempSD[i] * voorspelling$minTempSD[i] + voorspelling$maxTempSD[i] * voorspelling$maxTempSD[i]) /
+        2
+    )
     # neerslag
     voorspelling$neerslag[i] <- mean(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
     voorspelling$neerslagSD[i] <- sd(as.numeric(extraheer_numerieke_waarden(neerslag[i])))
@@ -244,8 +237,20 @@ get_14day_weather_forecast <- function() {
 
   # kolom-namen omzetten van leesbaar, naar  codes (kan weer worden teruggezet met de functie 'rename_columns()')
   colnames(voorspelling) <- c(
-    "STN", "YYYYMMDD", "date", "TX", "SD_maxTemp", "TN", "SD_minTemp", "TG", "SD_gemTemp",
-    "RH", "SD_neerslag", "neerslagKans", "SP", "windkracht"
+    "STN",
+    "YYYYMMDD",
+    "date",
+    "TX",
+    "SD_maxTemp",
+    "TN",
+    "SD_minTemp",
+    "TG",
+    "SD_gemTemp",
+    "RH",
+    "SD_neerslag",
+    "neerslagKans",
+    "SP",
+    "windkracht"
   )
 
   # windkracht omzetten naar m/s:
@@ -261,3 +266,4 @@ get_14day_weather_forecast <- function() {
 
   return(voorspelling)
 }
+
